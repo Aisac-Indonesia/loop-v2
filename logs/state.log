@@ -1,0 +1,10 @@
+[09:30:00] State initialized
+[09:30:00] Set currentPhase = 01-PLANNING
+[09:30:00] Advanced: 00-PREREQUISITES -> 01-PLANNING
+[09:30:00] Set waiting = true
+[09:30:00] Set reason = Please review wireframe
+[09:30:00] WAITING: Please review wireframe
+[09:30:00] Set waiting = false
+[09:30:00] Set reason = 
+[09:30:00] Set approved = true
+[09:30:00] Resumed

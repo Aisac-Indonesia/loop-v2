@@ -1,0 +1,14 @@
+# Phase: 03-BACKEND - Backend Development
+
+Reference: phases/03-BACKEND.md
+
+Task: Execute Backend development phase.
+
+Steps:
+1. Read the reference phase document
+2. Implement backend code following modular monolith
+3. No hardcoded dummy data — all via database
+4. Follow Sainskerta database rules
+5. Update templates/progress.md with results
+
+Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

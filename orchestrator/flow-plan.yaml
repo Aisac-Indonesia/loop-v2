@@ -1,0 +1,41 @@
+phases:
+  - id: "00-PREREQUISITES"
+    name: "Prerequisites"
+    depends_on: []
+    needs_approval: true
+    prompt_file: "orchestrator/phase-prompts/00-prerequisites.txt"
+  - id: "01-PLANNING"
+    name: "Planning"
+    depends_on: ["00-PREREQUISITES"]
+    needs_approval: true
+    prompt_file: "orchestrator/phase-prompts/01-planning.txt"
+  - id: "02-WIREFRAME-AUDIT"
+    name: "Wireframe & Mockup"
+    depends_on: ["01-PLANNING"]
+    needs_approval: true
+    prompt_file: "orchestrator/phase-prompts/02-wireframe.txt"
+  - id: "03-BACKEND"
+    name: "Backend Development"
+    depends_on: ["02-WIREFRAME-AUDIT"]
+    needs_approval: false
+    prompt_file: "orchestrator/phase-prompts/03-backend.txt"
+  - id: "04-FRONTEND"
+    name: "Frontend Development"
+    depends_on: ["03-BACKEND"]
+    needs_approval: false
+    prompt_file: "orchestrator/phase-prompts/04-frontend.txt"
+  - id: "05-AUDIT"
+    name: "Audit & Review"
+    depends_on: ["04-FRONTEND"]
+    needs_approval: true
+    prompt_file: "orchestrator/phase-prompts/05-audit.txt"
+  - id: "06-DEPLOYMENT"
+    name: "Deployment"
+    depends_on: ["05-AUDIT"]
+    needs_approval: true
+    prompt_file: "orchestrator/phase-prompts/06-deployment.txt"
+  - id: "07-IMPROVEMENT"
+    name: "Maintenance & Improvement"
+    depends_on: ["06-DEPLOYMENT"]
+    needs_approval: false
+    prompt_file: "orchestrator/phase-prompts/07-improvement.txt"

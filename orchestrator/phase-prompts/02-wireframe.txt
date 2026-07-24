@@ -1,0 +1,14 @@
+# Phase: 02-WIREFRAME-AUDIT - Wireframe & Mockup
+
+Reference: phases/02-WIREFRAME-AUDIT.md
+
+Task: Execute the Wireframe & Mockup phase.
+
+Steps:
+1. Read the reference phase document
+2. Create wireframes and mockups for all pages
+3. Present for user approval
+4. Wait for approval before proceeding
+5. Update templates/progress.md with results
+
+Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

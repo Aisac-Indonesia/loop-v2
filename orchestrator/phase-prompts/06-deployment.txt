@@ -1,0 +1,16 @@
+# Phase: 06-DEPLOYMENT - Deployment
+
+Reference: phases/06-DEPLOYMENT.md
+
+Task: Execute Deployment phase.
+
+Steps:
+1. Read the reference phase document
+2. Build application for production
+3. Configure SSL if needed
+4. Deploy to server
+5. Verify deployment is working
+6. Get user confirmation
+7. Update templates/progress.md with results
+
+Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

@@ -1,0 +1,14 @@
+# Phase: 04-FRONTEND - Frontend Development
+
+Reference: phases/04-FRONTEND.md
+
+Task: Execute Frontend development phase.
+
+Steps:
+1. Read the reference phase document
+2. Implement frontend code
+3. Integrate with backend API
+4. Follow UI/UX standards (sidebar 1 color icon, CRUD one page with drawer modal)
+5. Update templates/progress.md with results
+
+Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

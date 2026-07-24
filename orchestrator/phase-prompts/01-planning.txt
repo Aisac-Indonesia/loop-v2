@@ -1,0 +1,14 @@
+# Phase: 01-PLANNING - Planning
+
+Reference: phases/01-PLANNING.md
+
+Task: Execute the Planning phase.
+
+Steps:
+1. Read the reference phase document
+2. Analyze requirements from user_requirement.md
+3. Break down architecture and components
+4. Create detailed implementation plan
+5. Update templates/progress.md with results
+
+Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

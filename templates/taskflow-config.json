@@ -1,0 +1,20 @@
+{
+  "workflowVersion": "2.0.0",
+  "projectName": "",
+  "startDate": "",
+  "currentPhase": "00-PREREQUISITES",
+  "agentConfig": {
+    "model": "claude-privasimu",
+    "allowedTools": ["Read(*)", "Write(*)", "Edit(*)", "Bash(*)", "WebFetch(*)", "WebSearch"]
+  },
+  "phases": [
+    {"id": "00-PREREQUISITES", "name": "Prerequisites"},
+    {"id": "01-PLANNING", "name": "Planning"},
+    {"id": "02-WIREFRAME-AUDIT", "name": "Wireframe & Audit"},
+    {"id": "03-BACKEND", "name": "Backend Development"},
+    {"id": "04-FRONTEND", "name": "Frontend Development"},
+    {"id": "05-AUDIT", "name": "Audit & Review"},
+    {"id": "06-DEPLOYMENT", "name": "Deployment"},
+    {"id": "07-IMPROVEMENT", "name": "Maintenance & Improvement"}
+  ]
+}

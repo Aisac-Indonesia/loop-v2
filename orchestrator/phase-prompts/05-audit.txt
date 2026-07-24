@@ -1,0 +1,16 @@
+# Phase: 05-AUDIT - Audit & Review
+
+Reference: phases/05-AUDIT.md
+
+Task: Execute the Audit phase.
+
+Steps:
+1. Read the reference phase document
+2. Perform security audit
+3. Perform performance audit
+4. Conduct code review
+5. Generate audit report
+6. Present findings for user review
+7. Update templates/progress.md with results
+
+Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

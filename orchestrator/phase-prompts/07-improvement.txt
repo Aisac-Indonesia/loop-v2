@@ -1,0 +1,15 @@
+# Phase: 07-IMPROVEMENT - Maintenance & Improvement
+
+Reference: phases/07-IMPROVEMENT.md
+
+Task: Execute the Improvement phase.
+
+Steps:
+1. Read the reference phase document
+2. Review user feedback
+3. Identify improvement areas
+4. Implement improvements
+5. Update templates/progress.md with results
+6. Loop back to phase 01-PLANNING for next iteration
+
+Allowed tools: Read(*), Write(*), Edit(*), Bash(*)
