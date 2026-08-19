@@ -4,6 +4,83 @@
 
 ---
 
+## 🧷 STANDAR FLEKSIBILITAS DATABASE & MIGRATION (WAJIB)
+
+**Prinsip inti:** Platform yang dibangun dengan Loop harus **berjalan di mana pun** — baik di
+**Vercel** maupun **di luar Vercel** (Hostinger, Domainesia, VPS/shared hosting), tanpa harus
+menulis ulang kode database.
+
+### 1. Jangan Terkunci ke Satu Provider — WAJIB
+
+**JANGAN** mengunci project ke database spesifik vendor, misalnya Neon PostgreSQL milik Vercel.
+Koneksi database WAJIB lewat **variabel environment (`.env`)** yang bisa ditukar kapan saja,
+tanpa mengubah satu baris pun kode aplikasi.
+
+```env
+# ❌ JANGAN hardcode di kode
+DATABASE_URL="postgresql://default:xxx@neon.tech/db"   # terkunci ke Neon
+
+# ✅ WAJIB — semua via .env, bisa ditukar ke penyedia mana pun
+DB_CONNECTION=postgres    # postgres | mysql | sqlite | sqlsrv, dll
+DB_HOST=localhost
+DB_PORT=5432              # 5432 untuk Postgres, 3306 untuk MySQL
+DB_DATABASE=project_production
+DB_USERNAME=user
+DB_PASSWORD=secret
+```
+
+### 2. Engine Database yang Didukung
+
+Dukungan database **fleksibel & multi-engine**:
+
+| Engine | Contoh Penyedia | Kapan Dipakai |
+|--------|----------------|---------------|
+| PostgreSQL | Neon (Vercel), Supabase, hosting Postgres (Hostinger, Domainesia, VPS) | Jika mau serverless / managed / host mandiri |
+| MySQL / MariaDB | phpMyAdmin shared hosting, cPanel (Hostinger, Domainesia), VPS | Shared hosting / budget / familiar PHP |
+| SQLite | Local / development ringan | Dev cepat tanpa setup |
+| Lainnya | Oracle, SQL Server, etc. | Sesuai kebutuhan khusus |
+
+**Pilih engine sesuai TARGET DEPLOYMENT user** — bukan karena kebiasaan.
+Jika user deploy di Vercel → Postgres (bisa Neon) wajar. Jika user deploy di Hostinger /
+Domainesia shared hosting → MySQL via phpMyAdmin lebih tepat. **Jangan paksa satu engine.**
+
+### 3. Migration Harus Multi-Engine — WAJIB
+
+**MIGRATION TIDAK BOLEH terkunci ke satu engine.** Tulislah migration yang kompatibel
+lintas database (Postgres + MySQL), atau gunakan abstraction layer framework:
+
+- **Laravel** → gunakan Schema Builder (`Schema::create`), bukan SQL mentah. Supaya jalan
+  di MySQL dan Postgres tanpa modifikasi.
+- **Prisma / Drizzle** → definisikan schema sekali, generate migration per engine.
+- **Hindari syntax khusus engine** di migration (`AUTO_INCREMENT` hanya MySQL,
+  `BIGSERIAL` hanya Postgres). Gunakan pola portabel.
+
+```php
+// ✅ Laravel — portabel (jalan di MySQL & Postgres)
+Schema::create('users', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->timestamps();
+    $table->softDeletes();
+});
+```
+
+**Aturan teknis yang sama tetap berlaku di semua engine:**
+- No foreign key constraints
+- Soft delete (`deleted_at`)
+- Timestamps (`created_at`, `updated_at`)
+- Naming snake_case
+- Migration version controlled
+
+### 4. Konfigurasi .env Harus Ditukar Tanpa Ubah Kode
+
+Pindah dari satu environment ke environment lain (misal dev MySQL → prod Postgres) WAJIB
+cukup dengan mengganti nilai `.env`. **Jangan ada hardcode host/user/password/port di kode
+atau config file yang di-commit.**
+
+---
+
 ## 📜 Aturan Utama
 
 ### 1. No Foreign Key Constraints — WAJIB
@@ -211,6 +288,9 @@ Setiap 3 bulan: test restore untuk memastikan backup berfungsi.
 - [ ] Migration file untuk setiap perubahan
 - [ ] Seeder untuk development
 - [ ] Backup berjalan setiap hari
+- [ ] Database & migration FLEKSIBEL (tidak terkunci ke Neon/Vercel Postgres, support hosting Postgres + MySQL + lainnya)
+- [ ] Koneksi database via `.env` (bisa ditukar tanpa ubah kode)
+- [ ] Bisa deploy di Vercel DAN di luar Vercel (Hostinger/Domainesia) tanpa ubah kode
 
 ---
 

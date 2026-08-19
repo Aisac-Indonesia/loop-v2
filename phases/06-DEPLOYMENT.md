@@ -7,12 +7,19 @@
 ## 🎯 Tujuan
 
 1. Build production
-2. Deploy ke target (VPS/shared hosting/cloud)
+2. Deploy ke target (Vercel / VPS / shared hosting / cloud)
 3. Setup domain & SSL
 4. Setup environment variables
 5. Backup database
 6. Health check endpoint
 7. Monitoring setup
+
+> **🧷 Fleksibilitas Deployment & Database (WAJIB):** Platform yang dibangun Loop harus bisa
+> deploy di **Vercel** ATAU **di luar Vercel** (Hostinger, Domainesia, VPS, shared hosting)
+> tanpa ubah kode. Koneksi database via `.env` — bisa Postgres (Neon/Supabase/hosting) atau
+> MySQL (cPanel/phpMyAdmin). Di Vercel → sesuaikan env vars di dashboard Vercel. Di shared
+> hosting → sesuaikan `.env` + phpMyAdmin. Jangan paksa satu provider.
+> Lihat [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md).
 
 ---
 

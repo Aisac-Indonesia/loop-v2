@@ -23,14 +23,21 @@ User WAJIB menyediakan akses database. Tanpa ini, project **tidak bisa dimulai**
 
 **⚠️ Catatan:** Jangan pernah menyimpan credentials di kode. Pakai `.env` file.
 
+**🧷 Fleksibilitas Database (WAJIB):** Project TIDAK terkunci ke satu provider database
+(misal Neon Postgres Vercel). Harus bisa jalan di Vercel ATAU di luar Vercel
+(Hostinger/Domainesia/VPS/shared hosting). Tanya target deployment user DULU, lalu pilih
+engine yang pas → Postgres (Neon/Supabase/hosting) atau MySQL (cPanel/phpMyAdmin).
+Koneksi selalu via `.env` yang bisa ditukar tanpa ubah kode.
+Lihat [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md).
+
 ### □ 2. Framework & Target Deployment dari User
 
 User menentukan:
 - **Framework Backend:** Laravel, Next.js, Express, Django, dll
 - **Framework Frontend:** React, Vue, Svelte, dll
 - **CSS Framework:** Tailwind, Bootstrap, dll
-- **Database Engine:** MySQL, PostgreSQL, SQLite
-- **Target Deployment:** VPS, shared hosting, cloud
+- **Database Engine:** MySQL, PostgreSQL, SQLite, atau lainnya (fleksibel)
+- **Target Deployment:** Vercel, VPS, shared hosting (Hostinger/Domainesia), cloud — boleh lebih dari satu
 - **Domain:** sudah/belum
 - **SSL:** sudah/belum
 
