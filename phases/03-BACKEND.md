@@ -96,6 +96,12 @@ const Product = sequelize.define('Product', {
 
 Repository sebagai satu-satunya akses ke database.
 
+**🧷 DB-Agnostic (WAJIB):** Repository memakai abstraction netral (ORM/query builder).
+**JANGAN import driver vendor langsung** (`@vercel/postgres`, `neon`, `pg`, `mysql2`)
+di controller/CRUD. Controller/service tidak boleh tahu engine database di belakang —
+tukar Postgres/MySQL/SQLite cukup ubah `.env` + provider config, tanpa rombak migration 
+& CRUD. Lihat [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md).
+
 ```php
 // Modules/Product/Repositories/ProductRepository.php
 class ProductRepository

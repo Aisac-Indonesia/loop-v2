@@ -79,6 +79,44 @@ Pindah dari satu environment ke environment lain (misal dev MySQL → prod Postg
 cukup dengan mengganti nilai `.env`. **Jangan ada hardcode host/user/password/port di kode
 atau config file yang di-commit.**
 
+### 5. DB-Agnostic Repository Layer — WAJIB (Anti Vendor Lock-in)
+
+**Masalah yang dicegah:** Kecantol ke driver spesifik vendor (contoh `@vercel/postgres`,
+`neon.serverless`, `pg` langsung di controller/CRUD) membuat kode WAJIB dirombak saat
+pindah hosting (Vercel → Hostinger/Domainesia/AWS/GCP/on-premise). Ini TIDAK BOLEH terjadi.
+
+**Aturan WAJIB:**
+1. **JANGAN import driver database vendor langsung di layer aplikasi/CRUD**
+   (`@vercel/postgres`, `neon`, `pg`, `mysql2`, dll). ❌
+2. Semua akses data **WAJIB lewat Repository / Data-Access Layer** yang netral terhadap engine.
+3. Repository memakai abstraction framework (ORM/query builder) — Laravel Eloquent, Prisma,
+   Drizzle, TypeORM, Sequelize — bukan raw driver vendor.
+4. Lapisan aplikasi (controller/service/business logic) **tidak boleh tahu** engine apa yang
+   dipakai di belakang. Tukar Postgres→MySQL cukup ubah `.env` + provider/ORM config.
+
+```js
+// ❌ SALAH — kecantol ke Vercel/Neon, kode rombak kalau pindah
+import { sql } from '@vercel/postgres';
+export async function getUsers() {
+  return await sql`SELECT * FROM users WHERE deleted_at IS NULL`;
+}
+
+// ✅ BENAR — via Repository + ORM netral, bebas pindah engine
+// prisma/schema.prisma  →  datasource db { provider = env("DB_PROVIDER") } // postgres | mysql
+// repositories/UserRepository.ts
+export class UserRepository {
+  async getUsers() {
+    return await prisma.user.findMany({ where: { deletedAt: null } });
+  }
+}
+// Controller/service cuma panggil repository — tidak tahu engine di belakang
+```
+
+**Konsekuensi yang dijamin:**
+- Pindah Vercel → Hostinger/Domainesia → AWS → GCP → on-premise = **ganti `.env` saja**,
+  tanpa rombak migration & CRUD.
+- Bisa jalan di Vercel ATAU di luar Vercel dari satu basis kode yang sama.
+
 ---
 
 ## 📜 Aturan Utama

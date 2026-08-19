@@ -145,6 +145,12 @@ Repository adalah satu-satunya layer yang berinteraksi dengan database.
 2. Repository hanya return data (Model/Collection)
 3. Repository tidak tahu tentang business logic
 
+**🧷 DB-Agnostic (WAJIB):** Repository WAJIB memakai abstraction netral (ORM/query builder —
+Eloquent, Prisma, Drizzle, TypeORM, Sequelize), **JANGAN import driver vendor langsung**
+(`@vercel/postgres`, `neon`, `pg`, `mysql2`) di controller/CRUD. Controller/service tidak
+boleh tahu engine database di belakang. Tukar Postgres → MySQL → SQLite cukup ubah `.env` +
+provider config, tanpa rombak migration & CRUD. Lihat [DATABASE-RULES.md](DATABASE-RULES.md).
+
 ```php
 // Modules/Product/Repositories/ProductRepository.php
 class ProductRepository
