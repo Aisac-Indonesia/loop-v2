@@ -108,23 +108,50 @@ TIDAK BOLEH deploy sebelum fase audit selesai. Audit mencakup:
 - Mobile responsiveness
 - Database optimization
 
+### 12. UX Heuristic Benchmark ≥ 9.0/10 — WAJIB
+Setiap wireframe & mockup **WAJIB** di-score terhadap 3 framework UX sebelum ditampilkan ke user:
+- **Nielsen's 10 Usability Heuristics**
+- **Shneiderman's Eight Golden Rules of Interface Design**
+- **Laws of UX** (Jon Yablonski)
+
+**Gate:**
+- Overall **≥ 9.0 / 10**
+- Tidak ada framework dengan rata-rata **< 8.0 / 10**
+- Aturan konkret **UX-01 s/d UX-07** terpenuhi (cancel/undo/Esc, konteks lokasi, inline help, touch target 44×44px, WCAG 2.1 AA, navigasi top-level ≤ 9 item)
+
+Gagal gate → revisi internal & score ulang. **Draft yang gagal TIDAK BOLEH ditampilkan ke user.**
+
+Detail rubrik: [standards/UI-UX-STANDARDS.md](standards/UI-UX-STANDARDS.md#-ux-heuristic-benchmark-mandatory) · Proses: [phases/02-WIREFRAME-AUDIT.md](phases/02-WIREFRAME-AUDIT.md)
+
+### 13. Cloudflare Edge Security & Anti-Abuse — WAJIB
+Setiap project yang di-deploy ke domain publik **WAJIB** di belakang Cloudflare dengan baseline keamanan edge,
+untuk menahan registrasi massal akun palsu, pentest/scan tanpa izin, brute force, dan DDoS.
+
+**Minimal:** DNS proxied (orange-cloud) · Turnstile di signup/login/reset password (diverifikasi di backend) ·
+Rate Limiting Rules di endpoint sensitif · WAF Managed Rules + OWASP Core Ruleset · Bot Fight Mode ·
+DDoS aktif · runbook blok IP/negara/ASN · alert Security Events.
+
+Ini gate **pass/fail** — semua item WAJIB harus ✅ sebelum go-live. Lapisan edge ini **melengkapi**, bukan menggantikan, keamanan di level aplikasi.
+
+Detail: [standards/SECURITY-CLOUDFLARE.md](standards/SECURITY-CLOUDFLARE.md)
+
 ---
 
 ## 🟡 Aturan Anjuran (Recommendations)
 
-### 12. Database Migration Wajib
+### 14. Database Migration Wajib
 Gunakan migration system. Jangan edit schema manual di database.
 
-### 13. Seeder untuk Development — Tapi Jangan di Frontend
+### 15. Seeder untuk Development — Tapi Jangan di Frontend
 Seeder untuk populate database development itu BOLEH. Tapi frontend tetap nunggu data dari API.
 
-### 14. Snake_case untuk Database
+### 16. Snake_case untuk Database
 Semua nama tabel, kolom menggunakan `snake_case`. Bukan `camelCase` atau `PascalCase`.
 
-### 15. Git Wajib
+### 17. Git Wajib
 Setiap project harus version controlled dengan Git. Commit minimal per fase selesai.
 
-### 16. Progress Tracking
+### 18. Progress Tracking
 File `progress.md` WAJIB diupdate setiap kali ada perubahan status. Ini satu-satunya source of truth progress project.
 
 ---
@@ -147,4 +174,15 @@ File `progress.md` WAJIB diupdate setiap kali ada perubahan status. Ini satu-sat
 - [ ] Database optimization sudah cek (query, index)
 - [ ] Environment variables ter-setup
 - [ ] SSL sudah aktif
+- [ ] Wireframe & mockup lulus UX Heuristic Benchmark (overall ≥ 9.0, tiap framework ≥ 8.0) — lihat aturan #12
+- [ ] **Cloudflare (aturan #13)** — detail [standards/SECURITY-CLOUDFLARE.md](standards/SECURITY-CLOUDFLARE.md):
+  - [ ] DNS proxied (orange-cloud), SSL Full (strict)
+  - [ ] Turnstile di signup/login/reset password + verifikasi `siteverify` di backend
+  - [ ] Rate Limiting Rules di endpoint auth, OTP & write API publik
+  - [ ] WAF Managed Rules + OWASP Core Ruleset + custom rule path sensitif
+  - [ ] Bot Fight Mode / Super Bot Fight Mode aktif
+  - [ ] DDoS protection terkonfirmasi aktif
+  - [ ] API Shield Schema Validation untuk API publik / agent-key (anjuran)
+  - [ ] Runbook blok IP / negara / ASN terdokumentasi
+  - [ ] Notifications Security Events aktif ke channel tim
 - [ ] User sudah approve deployment

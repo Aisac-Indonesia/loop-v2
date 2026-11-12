@@ -96,9 +96,25 @@ Buat wireframe untuk **setiap halaman** dalam format HTML. **Gunakan HTML murni 
 </div>
 ```
 
+### Langkah 1b: UX Heuristic Self-Score Wireframe (WAJIB)
+
+**Sebelum wireframe ditampilkan ke user**, score setiap halaman pakai
+[UX Heuristic Benchmark](../standards/UI-UX-STANDARDS.md#-ux-heuristic-benchmark-mandatory)
+(Nielsen 10 + Shneiderman 8 + Laws of UX, rubrik 0/5/10).
+
+1. Isi score card per halaman → simpan di `wireframe/ux-scores.md`
+2. Cek gate:
+   - Overall **≥ 9.0 / 10**
+   - Rata-rata tiap framework (A, B, C) **≥ 8.0 / 10**
+   - Aturan konkret **UX-01 s/d UX-07** terpenuhi (navigasi top-level ≤ 9 item, touch target 44×44px, WCAG 2.1 AA, dll)
+3. **Gagal gate?** → revisi wireframe secara internal → score ulang → ulangi sampai lulus.
+4. **Lulus gate** → baru lanjut ke Langkah 2.
+
+> ⛔ Wireframe yang belum lulus gate **TIDAK BOLEH** ditampilkan ke user.
+
 ### Langkah 2: Loop Audit Wireframe
 
-Tampilkan wireframe ke user via `user_requirement.md`:
+Tampilkan wireframe **yang sudah lulus gate UX** ke user via `user_requirement.md`:
 
 ```
 ## Wireframe Audit
@@ -110,6 +126,11 @@ Halo! Berikut wireframe untuk project kamu:
 3. **Daftar Produk** — [link ke wireframe/products-list.html]
 4. **Modal Form Produk** — [link ke wireframe/products-form.html]
 
+Skor UX Heuristic (detail: wireframe/ux-scores.md):
+| Halaman | A | B | C | Overall |
+|---------|---|---|---|---------|
+| Login   | x.x | x.x | x.x | x.x |
+
 Mohon review dan feedbacknya:
 - ✅ Approve? Kalau ada yang diubah?
 - ❌ Ada yang kurang pas?
@@ -119,6 +140,7 @@ Mohon review dan feedbacknya:
 ### Langkah 3: Iterasi Wireframe
 
 - Jika user minta perubahan, update wireframe
+- **Score ulang** (Langkah 1b) — perubahan dari user tetap wajib lulus gate UX
 - Tampilkan lagi ke user
 - Ulangi sampai user approve SEMUA wireframe
 
@@ -136,9 +158,21 @@ Setelah wireframe approve, upgrade ke mockup **dengan styling proper**:
 
 **Mockup harus bisa di-interact (klik, hover).**
 
+### Langkah 4b: UX Heuristic Self-Score Mockup (WAJIB)
+
+Sama seperti Langkah 1b, tapi untuk mockup high fidelity. Tambahan cek visual & interaksi:
+kontras warna (WCAG 2.1 AA ≥ 4.5:1), focus ring, hover/active state, ukuran tombol 44×44px,
+`Esc` menutup drawer, feedback (toast/loading) di setiap aksi.
+
+1. Isi score card per halaman → simpan di `templates/mockup/ux-scores.md`
+2. Gate sama: overall ≥ 9.0, tiap framework ≥ 8.0, UX-01..07 terpenuhi
+3. Gagal → revisi internal → score ulang. Lulus → lanjut Langkah 5.
+
+> ⛔ Mockup yang belum lulus gate **TIDAK BOLEH** ditampilkan ke user.
+
 ### Langkah 5: Audit Mockup
 
-Tampilkan mockup ke user:
+Tampilkan mockup **yang sudah lulus gate UX** ke user (sertakan ringkasan skor dari `templates/mockup/ux-scores.md`):
 
 ```
 ## Mockup Audit
@@ -155,7 +189,7 @@ Cek: apakah warna, layout, dan interaksi sudah sesuai?
 
 User WAJIB approve mockup sebelum coding dimulai.
 
-**Jika user minta perubahan:** iterasi lagi.
+**Jika user minta perubahan:** iterasi lagi (dan score ulang — Langkah 4b).
 
 **Jika user approve:** tulis `MOCKUP APPROVED` di `user_requirement.md`.
 
@@ -171,6 +205,8 @@ Setelah fase ini selesai:
 - [x] Mockup high fidelity sudah dibuat
 - [x] Mockup sudah di-approve user
 - [x] Semua file mockup ada di `templates/mockup/`
+- [x] Semua wireframe lulus gate UX Heuristic (skor di `wireframe/ux-scores.md`)
+- [x] Semua mockup lulus gate UX Heuristic (skor di `templates/mockup/ux-scores.md`)
 
 ---
 
@@ -185,3 +221,4 @@ Setelah mockup approve, update progress dan lanjut ke [03-BACKEND.md](03-BACKEND
 - [standards/UI-UX-STANDARDS.md](../standards/UI-UX-STANDARDS.md) — Standar UI/UX & color palette
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan right-side drawer modal
 - [templates/user_requirement.md](../templates/user_requirement.md) — Tempat feedback user
+- [standards/UI-UX-STANDARDS.md#-ux-heuristic-benchmark-mandatory](../standards/UI-UX-STANDARDS.md#-ux-heuristic-benchmark-mandatory) — Rubrik & gate skor UX (≥ 9.0)
