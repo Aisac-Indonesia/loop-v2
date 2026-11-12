@@ -25,12 +25,32 @@
 - **WAJIB**: Snake_case untuk database
 - **WAJIB**: Repository + Service pattern
 - **WAJIB**: API endpoints sesuai spesifikasi
+- **WAJIB**: Kode dalam bahasa Inggris — identifier, komentar, nama tabel/kolom (`products.price`, bukan `produk.harga`), commit message ([aturan #15](../RULES-OF-THE-GAME.md#15-code-language-standard--english-only-untuk-kode--wajib))
+- **WAJIB**: Error API berupa **error code** (`PRODUCT_NOT_FOUND`) — teks pesan diterjemahkan frontend (i18n id/en/ja, [aturan #14](../RULES-OF-THE-GAME.md#14-internationalization-i18n--3-bahasa--wajib))
+- **WAJIB**: Supply-chain gate — exact pin, lockfile, CI scan, install scripts off ([aturan #17](../RULES-OF-THE-GAME.md#17-supply-chain--dependency-security--wajib), [SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md))
+- **WAJIB**: Endpoint agregat untuk chart (`GET /api/{resource}/stats`) di modul dengan data numerik ([UX-09](../standards/UI-UX-STANDARDS.md#-data-visualization-wajib))
+- **WAJIB**: Endpoint export (jika ada) mendukung password opsional + enkripsi native ([EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md))
 - **LARANGAN**: Hardcoded data di response
 - **LARANGAN**: Logic di controller (pindahkan ke service)
 
 ---
 
 ## 📋 Langkah-Langkah
+
+### Langkah 0: Setup Dependency & CI Supply-Chain (WAJIB)
+
+Sebelum menulis kode, kunci rantai dependency sesuai [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md):
+
+```bash
+npm config set save-exact true --location=project   # SC-01: semua install exact
+npm config set ignore-scripts true --location=project   # SC-05 (npm < 12; npm 12+ default off)
+git add package.json package-lock.json .npmrc        # SC-02: lockfile di-commit
+```
+
+- CI: `npm ci` / `pnpm install --frozen-lockfile` + `npm audit --audit-level=high` + Trivy/Grype (SC-02, SC-04)
+- `renovate.json` / `.github/dependabot.yml` dengan cooldown 7 hari & no auto-merge major (SC-08)
+- Dockerfile: `FROM image:tag@sha256:<digest>` (SC-07); SBOM di job release (SC-09)
+- Setiap dependency baru → isi Dependency Review di PR (SC-03)
 
 ### Langkah 1: Migration Database
 
@@ -324,6 +344,9 @@ Setelah fase ini selesai:
 - [x] API documentation
 - [x] Semua endpoint bisa di-test via Postman/curl
 - [x] Tidak ada data hardcoded di response
+- [x] Identifier, komentar, tabel/kolom dalam bahasa Inggris
+- [x] Endpoint stats untuk chart & export (password opsional) tersedia sesuai kebutuhan modul
+- [x] Supply-chain baseline aktif (exact pin, lockfile, CI scan, install scripts off, SBOM)
 
 ---
 
@@ -337,4 +360,6 @@ Setelah backend selesai dan API bisa diakses, update progress dan lanjut ke [04-
 
 - [standards/MODULAR-MONOLITH.md](../standards/MODULAR-MONOLITH.md) — Pattern modular
 - [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md) — Aturan database
+- [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md) — Pinning, lockfile, scan, SBOM
+- [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) — Enkripsi export DOCX/PDF/XLSX
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan soft delete & no FK

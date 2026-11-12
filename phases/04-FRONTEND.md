@@ -13,6 +13,9 @@
 5. Integrasi dengan backend API (data real!)
 6. Form validation
 7. Loading & error states
+8. i18n (id/en/ja) + language switcher + guided tour "?"
+9. Ikon proporsional & data visualization
+10. Export dengan password (jika ada fitur export)
 
 ---
 
@@ -26,6 +29,12 @@
 - **WAJIB**: Error handling untuk setiap request
 - **WAJIB**: Soft delete & restore UI
 - **WAJIB**: Mobile responsive
+- **WAJIB**: i18n 3 bahasa (id default, en, ja) + language switcher di topbar — tidak ada string UI hardcoded ([aturan #14](../RULES-OF-THE-GAME.md#14-internationalization-i18n--3-bahasa--wajib))
+- **WAJIB**: Kode bahasa Inggris (identifier, komentar, nama file/folder) ([aturan #15](../RULES-OF-THE-GAME.md#15-code-language-standard--english-only-untuk-kode--wajib))
+- **WAJIB**: Ikon proporsional di list/CRUD & modal + data visualization (dashboard ≥ 2, list numerik ≥ 1) ([aturan #16](../RULES-OF-THE-GAME.md#16-ikon-proporsional--data-visualization--wajib))
+- **WAJIB**: Tombol `?` + guided tour driver.js di setiap modul utama ([UX-10](../standards/UI-UX-STANDARDS.md#-guided-tour--bantuan--wajib))
+- **WAJIB**: Dialog export dengan password opsional (jika ada fitur export) ([EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md))
+- **WAJIB**: Dependency frontend exact-pinned & lolos review ([SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md))
 - **LARANGAN**: Dummy/hardcoded data untuk development
 
 ---
@@ -46,6 +55,18 @@ npm install axios vue-router pinia
 
 # Setup Tailwind CSS (rekomendasi)
 npm install -D tailwindcss @tailwindcss/vite
+
+# i18n + chart + guided tour (WAJIB) — exact pin (SC-01)
+npm config set save-exact true --location=project
+npm install i18next react-i18next recharts driver.js     # React
+npm install vue-i18n vue-chartjs chart.js driver.js      # Vue
+```
+
+Struktur i18n minimal (detail: [UI-UX-STANDARDS.md — i18n](../standards/UI-UX-STANDARDS.md#-internationalization-i18n--3-bahasa-wajib)):
+
+```
+src/locales/{id,en,ja}/common.json      # topbar, tombol umum, validasi
+src/locales/{id,en,ja}/<module>.json    # label, pesan, chart, tour per modul
 ```
 
 ### Langkah 2: Sidebar Layout dengan 1 Color Icon
@@ -354,6 +375,59 @@ function ProductList() {
 }
 ```
 
+### Langkah 8: Topbar — Language Switcher & Tombol "?" (i18n + Guided Tour)
+
+Urutan topbar kanan: **language switcher → `?` → avatar**. Semua teks via `t()`.
+
+```jsx
+// components/Topbar.jsx — React + react-i18next + driver.js
+import { useTranslation } from 'react-i18next';
+import { CircleHelp } from 'lucide-react';
+import { startPageTour } from '../tours';
+
+const LOCALES = { id: 'Bahasa Indonesia', en: 'English', ja: '日本語' };
+
+export function Topbar({ pageKey }) {
+  const { t, i18n } = useTranslation('common');
+  return (
+    <header className="flex justify-end items-center gap-2 px-6 h-14">
+      <select aria-label={t('topbar.language')} value={i18n.language}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}>
+        {Object.entries(LOCALES).map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+      </select>
+      <button aria-label={t('topbar.help')} title={t('topbar.help')} className="h-11 w-11"
+              onClick={() => startPageTour(pageKey, t)}>
+        <CircleHelp size={20} />
+      </button>
+      {/* avatar */}
+    </header>
+  );
+}
+```
+
+- Setiap modul utama mendaftarkan langkah tour (±5) di `src/tours/<module>.js`, target `data-tour="..."`, teks dari `<module>.tour.*`.
+- Tambah string baru → **wajib** di `id`, `en`, `ja` sekaligus; CI key-parity harus hijau.
+
+### Langkah 9: Ikon Proporsional & Data Visualization
+
+- Tombol aksi utama = ikon + label (`[+ Tambah]`); aksi per baris boleh icon-only dengan `aria-label` + tooltip. Maks 1 ikon per tombol, tanpa ikon di label field.
+- Dashboard: ≥ 2 widget chart/stat; list modul numerik: ≥ 1 chart dari `GET /api/{resource}/stats`.
+
+```jsx
+// Recharts — data dari API, bukan dummy
+<ResponsiveContainer width="100%" height={240}>
+  <BarChart data={stats} aria-label={t('products.chart.stockByCategory')}>
+    <XAxis dataKey="category" /><YAxis /><Tooltip />
+    <Bar dataKey="stock" fill="#3B82F6" />
+  </BarChart>
+</ResponsiveContainer>
+```
+
+### Langkah 10: Dialog Export dengan Password (jika ada fitur export)
+
+Ikuti [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md): toggle "Lindungi dengan password" (default OFF),
+input `type="password"` + tombol show/hide ber-`aria-label`, password dikirim di body `POST /api/{resource}/export`, tidak disimpan di state global/localStorage.
+
 ---
 
 ## ✅ Output Fase 04
@@ -369,6 +443,12 @@ Setelah fase ini selesai:
 - [x] Empty state untuk data kosong
 - [x] Mobile responsive
 - [x] Sesuai dengan mockup yang sudah di-approve
+- [x] UI tersedia dalam id (default), en, ja; language switcher di topbar; tidak ada string UI hardcoded
+- [x] Identifier, komentar, nama file/folder dalam bahasa Inggris
+- [x] Ikon proporsional di list/CRUD & modal; dashboard ≥ 2 chart/stat; list numerik ≥ 1 chart
+- [x] Tombol `?` + guided tour bernomor (±5 langkah) di setiap modul utama
+- [x] Dialog export dengan password opsional (jika ada fitur export)
+- [x] Dependency frontend exact-pinned, lockfile ter-commit
 
 ---
 
@@ -383,3 +463,5 @@ Setelah frontend selesai, update progress dan lanjut ke [05-AUDIT.md](05-AUDIT.m
 - [standards/UI-UX-STANDARDS.md](../standards/UI-UX-STANDARDS.md) — Standar UI/UX
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan sidebar icon, CRUD one page
 - [phases/02-WIREFRAME-AUDIT.md](02-WIREFRAME-AUDIT.md) — Mockup yang sudah di-approve
+- [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) — Export DOCX/PDF/XLSX dengan password
+- [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md) — Pinning & review dependency frontend

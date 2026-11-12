@@ -9,6 +9,9 @@ Steps:
 2. Implement backend code following modular monolith
 3. No hardcoded dummy data — all via database
 4. Follow Sainskerta database rules
+   - English-only identifiers/comments/table names (RULES #15)
+   - Supply-chain baseline per standards/SUPPLY-CHAIN-SECURITY.md (RULES #17)
+   - Export endpoints with optional password per standards/EXPORT-STANDARDS.md
 5. Update templates/progress.md with results
 
 Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

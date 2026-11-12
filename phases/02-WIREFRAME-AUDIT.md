@@ -96,6 +96,40 @@ Buat wireframe untuk **setiap halaman** dalam format HTML. **Gunakan HTML murni 
 </div>
 ```
 
+**Wajib direncanakan di setiap wireframe** (meski masih greyscale/placeholder):
+
+| Item | Yang harus terlihat di wireframe | Aturan |
+|------|----------------------------------|--------|
+| Topbar kanan | `[ID ▾]` language switcher → `[?]` tombol bantuan → avatar | UX-10, UX-11 |
+| Ikon aksi | Placeholder ikon kecil (□) di tombol Tambah/Edit/Hapus/Restore/Export/Filter & badge status — **maks 1 per tombol**, tidak di setiap label field | UX-08 |
+| Data viz | Dashboard: ≥ 2 kotak chart/stat (tulis jenisnya: "Bar — penjualan/bulan"). List modul numerik: ≥ 1 kotak chart | UX-09 |
+| Export (jika ada) | Dialog export dengan toggle "Lindungi dengan password" + input show/hide | [EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) |
+| Rencana tour | Daftar langkah tour per halaman (±5) di `wireframe/tour-plan.md`: nomor, elemen target (`data-tour="..."`), judul, isi singkat | UX-10 |
+
+```html
+<!-- Topbar (kanan) -->
+<div style="display:flex; justify-content:flex-end; gap:8px; padding:8px 24px; background:#f5f5f5;">
+  <div style="width:72px; height:36px; background:#ddd; border-radius:8px;">ID ▾</div>   <!-- id / en / ja -->
+  <div style="width:36px; height:36px; background:#ddd; border-radius:50%;">?</div>      <!-- guided tour -->
+  <div style="width:36px; height:36px; background:#bbb; border-radius:50%;"></div>        <!-- avatar -->
+</div>
+<!-- Dashboard: minimal 2 widget visualisasi -->
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+  <div style="height:200px; background:#eee;">[Line — pendapatan 12 bulan]</div>
+  <div style="height:200px; background:#eee;">[Donut — komposisi kategori]</div>
+</div>
+```
+
+```markdown
+<!-- wireframe/tour-plan.md -->
+## Tour — Daftar Produk (5 langkah)
+1. `products-add` — Tambah produk: buka form di drawer kanan
+2. `products-filter` — Filter & cari: persempit daftar
+3. `products-chart` — Grafik stok: lihat tren sekilas
+4. `products-table` — Tabel: klik baris untuk edit
+5. `products-trash` — Data terhapus: restore data
+```
+
 ### Langkah 1b: UX Heuristic Self-Score Wireframe (WAJIB)
 
 **Sebelum wireframe ditampilkan ke user**, score setiap halaman pakai
@@ -106,7 +140,7 @@ Buat wireframe untuk **setiap halaman** dalam format HTML. **Gunakan HTML murni 
 2. Cek gate:
    - Overall **≥ 9.0 / 10**
    - Rata-rata tiap framework (A, B, C) **≥ 8.0 / 10**
-   - Aturan konkret **UX-01 s/d UX-07** terpenuhi (navigasi top-level ≤ 9 item, touch target 44×44px, WCAG 2.1 AA, dll)
+   - Aturan konkret **UX-01 s/d UX-11** terpenuhi (navigasi top-level ≤ 9 item, touch target 44×44px, WCAG 2.1 AA, dll)
 3. **Gagal gate?** → revisi wireframe secara internal → score ulang → ulangi sampai lulus.
 4. **Lulus gate** → baru lanjut ke Langkah 2.
 
@@ -151,7 +185,10 @@ Mohon review dan feedbacknya:
 Setelah wireframe approve, upgrade ke mockup **dengan styling proper**:
 
 - Warna sesuai palet Sainskerta (lihat [UI-UX-STANDARDS.md](../standards/UI-UX-STANDARDS.md))
-- Icon SVG inline (1 color solid)
+- Icon SVG inline (1 color solid) — proporsional: aksi utama & status saja, maks 1 ikon per tombol (UX-08)
+- Chart nyata (Recharts/Chart.js) di dashboard (≥ 2) & list modul numerik (≥ 1) (UX-09)
+- Tombol `?` di topbar menjalankan demo tour sesuai `wireframe/tour-plan.md` (UX-10)
+- Language switcher id/en/ja berfungsi minimal untuk 1 halaman contoh; cek layout dengan teks `ja` & `en` (UX-11)
 - Typography proper
 - Shadow, border-radius, spacing realistis
 - Animasi slide-in right modal
@@ -165,7 +202,7 @@ kontras warna (WCAG 2.1 AA ≥ 4.5:1), focus ring, hover/active state, ukuran to
 `Esc` menutup drawer, feedback (toast/loading) di setiap aksi.
 
 1. Isi score card per halaman → simpan di `templates/mockup/ux-scores.md`
-2. Gate sama: overall ≥ 9.0, tiap framework ≥ 8.0, UX-01..07 terpenuhi
+2. Gate sama: overall ≥ 9.0, tiap framework ≥ 8.0, UX-01..11 terpenuhi
 3. Gagal → revisi internal → score ulang. Lulus → lanjut Langkah 5.
 
 > ⛔ Mockup yang belum lulus gate **TIDAK BOLEH** ditampilkan ke user.
@@ -207,6 +244,9 @@ Setelah fase ini selesai:
 - [x] Semua file mockup ada di `templates/mockup/`
 - [x] Semua wireframe lulus gate UX Heuristic (skor di `wireframe/ux-scores.md`)
 - [x] Semua mockup lulus gate UX Heuristic (skor di `templates/mockup/ux-scores.md`)
+- [x] Setiap halaman punya rencana ikon proporsional, data viz, dan posisi tombol `?` + language switcher
+- [x] Rencana tour per halaman ada di `wireframe/tour-plan.md`
+- [x] Dialog export dengan opsi password ada di mockup (jika project punya fitur export)
 
 ---
 
@@ -222,3 +262,5 @@ Setelah mockup approve, update progress dan lanjut ke [03-BACKEND.md](03-BACKEND
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan right-side drawer modal
 - [templates/user_requirement.md](../templates/user_requirement.md) — Tempat feedback user
 - [standards/UI-UX-STANDARDS.md#-ux-heuristic-benchmark-mandatory](../standards/UI-UX-STANDARDS.md#-ux-heuristic-benchmark-mandatory) — Rubrik & gate skor UX (≥ 9.0)
+- [standards/UI-UX-STANDARDS.md#-guided-tour--bantuan--wajib](../standards/UI-UX-STANDARDS.md#-guided-tour--bantuan--wajib) — Guided tour "?", ikon proporsional, data viz, i18n
+- [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) — Dialog export dengan password

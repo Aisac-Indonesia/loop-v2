@@ -117,7 +117,7 @@ Setiap wireframe & mockup **WAJIB** di-score terhadap 3 framework UX sebelum dit
 **Gate:**
 - Overall **≥ 9.0 / 10**
 - Tidak ada framework dengan rata-rata **< 8.0 / 10**
-- Aturan konkret **UX-01 s/d UX-07** terpenuhi (cancel/undo/Esc, konteks lokasi, inline help, touch target 44×44px, WCAG 2.1 AA, navigasi top-level ≤ 9 item)
+- Aturan konkret **UX-01 s/d UX-11** terpenuhi (cancel/undo/Esc, konteks lokasi, inline help, touch target 44×44px, WCAG 2.1 AA, navigasi top-level ≤ 9 item, ikon proporsional, data visualization, guided tour "?", language switcher)
 
 Gagal gate → revisi internal & score ulang. **Draft yang gagal TIDAK BOLEH ditampilkan ke user.**
 
@@ -135,23 +135,70 @@ Ini gate **pass/fail** — semua item WAJIB harus ✅ sebelum go-live. Lapisan e
 
 Detail: [standards/SECURITY-CLOUDFLARE.md](standards/SECURITY-CLOUDFLARE.md)
 
+### 14. Internationalization (i18n) — 3 Bahasa — WAJIB
+Setiap aplikasi **WAJIB** mendukung 3 bahasa UI: **Indonesia (`id`, default)**, **English (`en`)**, **日本語 (`ja`)**.
+
+- Pakai library i18n standar framework (`next-intl`, `react-i18next`, `vue-i18n`, Laravel localization)
+- **Semua** teks user-facing (label, tombol, pesan, error validasi, tooltip) dari translation key — tidak ada string hardcoded di komponen
+- Language switcher di topbar
+- File terjemahan per modul/fitur, satu set per locale (`locales/{id,en,ja}/<module>.json`)
+
+**String UI baru di satu bahasa tanpa dua bahasa lainnya = belum selesai & TIDAK BOLEH di-merge.**
+
+Detail: [standards/UI-UX-STANDARDS.md](standards/UI-UX-STANDARDS.md#-internationalization-i18n--3-bahasa-wajib)
+
+### 15. Code Language Standard — English Only untuk Kode — WAJIB
+Semua **kode aplikasi yang diserahkan ke klien** memakai **bahasa Inggris**:
+- Identifier: variabel, function, class, file, folder → English (`calculateTotalPrice`, bukan `hitungTotalHarga`)
+- Komentar kode → English
+- Nama tabel & kolom database → `snake_case` **dan** kata bahasa Inggris (`products.price`, bukan `produk.harga`)
+- Commit message di repo aplikasi yang di-generate → English
+
+**Scope:** aturan ini **hanya** untuk source code aplikasi. Teks UI diatur i18n (aturan #14, boleh id/en/ja).
+Dokumen proses workflow ini sendiri (SKILL.md, RULES-OF-THE-GAME.md, `standards/*.md`, `phases/*.md`) **tetap Bahasa Indonesia**.
+
+Verifikasi: grep sanity check di [phases/05-AUDIT.md](phases/05-AUDIT.md#-8-code-language-check-english-only)
+
+### 16. Ikon Proporsional & Data Visualization — WAJIB
+Bagian dari gate UX Heuristic (aturan #12, item **UX-08** & **UX-09**):
+- **Ikon proporsional:** setiap list/CRUD & modal create/edit pakai ikon untuk aksi utama (tambah/edit/hapus/restore/export/filter) & status — gaya sama dengan sidebar 1 color solid (aturan #6). Maks **1 ikon per aksi**, tanpa ikon dekoratif per label/field, tombol icon-only wajib `aria-label`.
+- **Data visualization:** dashboard home ≥ **2 widget chart/stat**; list modul dengan data numerik/agregat ≥ **1 chart** (Recharts / Chart.js) — bukan tabel mentah saja.
+
+Fitur pendukung UX yang juga wajib (detail di standar UI/UX):
+- **Guided tour "?"** di setiap modul utama (UX-10, driver.js)
+- **Export DOCX/PDF/XLSX dengan password opsional** — [standards/EXPORT-STANDARDS.md](standards/EXPORT-STANDARDS.md)
+
+Detail: [standards/UI-UX-STANDARDS.md](standards/UI-UX-STANDARDS.md#-ikon-proporsional-wajib)
+
+### 17. Supply-Chain & Dependency Security — WAJIB
+Rangkaian serangan supply-chain 2025–2026 (Shai-Hulud, chalk/debug, serta insiden Oktober 2026 Tensorlake, OVHcloud CLI,
+LiteLLM — sering disebut "Black October 2026") membuktikan satu dependency yang dibajak cukup untuk mencuri semua secret.
+
+**Minimal:** exact version pinning (tanpa `^`/`~`) · lockfile di-commit & CI frozen install · Dependency Review Gate sebelum merge ·
+vulnerability scan di CI hard-fail high/critical · install scripts pihak ketiga off by default · 2FA + trusted publishing + provenance
+untuk paket milik tim · Docker image pinned by digest · Renovate/Dependabot tanpa auto-merge major · SBOM per release.
+
+Gate **pass/fail** — dicek di fase Backend (setup) dan Audit (sebelum deploy).
+
+Detail: [standards/SUPPLY-CHAIN-SECURITY.md](standards/SUPPLY-CHAIN-SECURITY.md)
+
 ---
 
 ## 🟡 Aturan Anjuran (Recommendations)
 
-### 14. Database Migration Wajib
+### 18. Database Migration Wajib
 Gunakan migration system. Jangan edit schema manual di database.
 
-### 15. Seeder untuk Development — Tapi Jangan di Frontend
+### 19. Seeder untuk Development — Tapi Jangan di Frontend
 Seeder untuk populate database development itu BOLEH. Tapi frontend tetap nunggu data dari API.
 
-### 16. Snake_case untuk Database
+### 20. Snake_case untuk Database
 Semua nama tabel, kolom menggunakan `snake_case`. Bukan `camelCase` atau `PascalCase`.
 
-### 17. Git Wajib
+### 21. Git Wajib
 Setiap project harus version controlled dengan Git. Commit minimal per fase selesai.
 
-### 18. Progress Tracking
+### 22. Progress Tracking
 File `progress.md` WAJIB diupdate setiap kali ada perubahan status. Ini satu-satunya source of truth progress project.
 
 ---
@@ -185,4 +232,13 @@ File `progress.md` WAJIB diupdate setiap kali ada perubahan status. Ini satu-sat
   - [ ] API Shield Schema Validation untuk API publik / agent-key (anjuran)
   - [ ] Runbook blok IP / negara / ASN terdokumentasi
   - [ ] Notifications Security Events aktif ke channel tim
+- [ ] **i18n (aturan #14):** UI tersedia id/en/ja, language switcher ada, key parity antar locale hijau
+- [ ] **English-only code (aturan #15):** grep sanity check identifier Indonesia lulus
+- [ ] **Ikon & data viz (aturan #16):** ikon proporsional, dashboard ≥ 2 chart/stat, guided tour "?" di modul utama, export password berfungsi (jika ada export)
+- [ ] **Supply chain (aturan #17)** — detail [standards/SUPPLY-CHAIN-SECURITY.md](standards/SUPPLY-CHAIN-SECURITY.md):
+  - [ ] Exact pin + lockfile ter-commit + CI frozen install
+  - [ ] Audit/scan CI hijau (tidak ada high/critical)
+  - [ ] Install scripts allowlist ter-review
+  - [ ] Docker image pinned by digest
+  - [ ] SBOM tersimpan sebagai artifact release
 - [ ] User sudah approve deployment
