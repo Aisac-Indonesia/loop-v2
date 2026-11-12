@@ -16,6 +16,9 @@
 8. i18n (id/en/ja) + language switcher + guided tour "?"
 9. Ikon proporsional & data visualization
 10. Export dengan password (jika ada fitur export)
+11. Core Web Vitals (LCP/INP/CLS) dijaga sejak awal
+12. Test komponen & E2E alur kritis (TDD)
+13. Halaman "Privasi & Data Saya" (jika ada data pribadi)
 
 ---
 
@@ -35,6 +38,10 @@
 - **WAJIB**: Tombol `?` + guided tour driver.js di setiap modul utama ([UX-10](../standards/UI-UX-STANDARDS.md#-guided-tour--bantuan--wajib))
 - **WAJIB**: Dialog export dengan password opsional (jika ada fitur export) ([EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md))
 - **WAJIB**: Dependency frontend exact-pinned & lolos review ([SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md))
+- **WAJIB**: Core Web Vitals — LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1: reservasi ruang gambar/chart/skeleton, code-splitting library berat, drawer sebagai overlay ([CORE-WEB-VITALS.md](../standards/CORE-WEB-VITALS.md))
+- **WAJIB**: Test komponen berlogika (form, drawer, filter, language switcher) + E2E Playwright alur kritis, coverage frontend ≥ 60% (hooks/state ≥ 80%) ([TESTING-TDD.md](../standards/TESTING-TDD.md))
+- **WAJIB**: Halaman "Privasi & Data Saya" — unduh data, tarik consent, ajukan koreksi/hapus/keberatan (jika app memproses data pribadi) ([DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md))
+- **WAJIB**: Hanya env publik (`NEXT_PUBLIC_*` / `VITE_*`) di bundle — tidak ada secret di frontend ([TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md) TF-III)
 - **LARANGAN**: Dummy/hardcoded data untuk development
 
 ---
@@ -428,6 +435,31 @@ export function Topbar({ pageKey }) {
 Ikuti [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md): toggle "Lindungi dengan password" (default OFF),
 input `type="password"` + tombol show/hide ber-`aria-label`, password dikirim di body `POST /api/{resource}/export`, tidak disimpan di state global/localStorage.
 
+### Langkah 11: Core Web Vitals sejak Awal (WAJIB)
+
+Detail & teknik: [standards/CORE-WEB-VITALS.md](../standards/CORE-WEB-VITALS.md). Yang diukur formal di Audit, tapi dibangun di sini:
+- [ ] Semua `<img>`/chart container punya `width`/`height` atau `aspect-ratio`; skeleton berdimensi sama dengan konten final (CLS)
+- [ ] Gambar hero/LCP **tidak** di-lazy-load (`fetchpriority="high"` / Next `priority`); gambar lain `loading="lazy"`, format AVIF/WebP (LCP)
+- [ ] Route-based code-splitting; library berat (chart, driver.js, export, rich-text editor) via dynamic `import()` (LCP/INP)
+- [ ] Tabel panjang divirtualisasi, search di-debounce, long task dipecah; drawer = overlay `position: fixed` + animasi `transform` (INP/CLS)
+- [ ] Ganti bahasa id/en/ja tidak membuat layout melompat (CLS)
+- [ ] Cek cepat Lighthouse lokal per halaman baru sebelum PR
+
+### Langkah 12: Test Frontend (WAJIB)
+
+Detail: [standards/TESTING-TDD.md](../standards/TESTING-TDD.md)
+- [ ] Logika state/hooks/form ditulis test-first (Vitest + React Testing Library)
+- [ ] Setiap komponen berlogika: render + interaksi utama + state loading/error/empty
+- [ ] E2E Playwright `@smoke`: login, CRUD satu module utama via right-side drawer (create/edit/soft delete/restore), ganti bahasa
+- [ ] CI hard-fail bila test gagal / coverage di bawah threshold `vitest.config.ts`
+
+### Langkah 13: Halaman "Privasi & Data Saya" (WAJIB bila ada data pribadi)
+
+Detail: [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md) §1 & §5
+- [ ] Checkbox consent tidak pre-checked, terpisah per tujuan, di signup & pengaturan
+- [ ] Toggle tarik consent per tujuan; tombol "Unduh data saya" (JSON/CSV); form koreksi, hapus akun (re-auth), keberatan/pembatasan
+- [ ] Status permintaan terlihat oleh user (diterima → diverifikasi → selesai) — semua teks via i18n id/en/ja
+
 ---
 
 ## ✅ Output Fase 04
@@ -449,6 +481,9 @@ Setelah fase ini selesai:
 - [x] Tombol `?` + guided tour bernomor (±5 langkah) di setiap modul utama
 - [x] Dialog export dengan password opsional (jika ada fitur export)
 - [x] Dependency frontend exact-pinned, lockfile ter-commit
+- [x] Teknik Core Web Vitals diterapkan (reservasi ruang, code-splitting, lazy-load non-LCP)
+- [x] Test komponen + E2E smoke hijau di CI, coverage frontend memenuhi threshold
+- [x] Halaman "Privasi & Data Saya" berfungsi (jika ada data pribadi)
 
 ---
 
@@ -465,3 +500,6 @@ Setelah frontend selesai, update progress dan lanjut ke [05-AUDIT.md](05-AUDIT.m
 - [phases/02-WIREFRAME-AUDIT.md](02-WIREFRAME-AUDIT.md) — Mockup yang sudah di-approve
 - [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) — Export DOCX/PDF/XLSX dengan password
 - [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md) — Pinning & review dependency frontend
+- [standards/CORE-WEB-VITALS.md](../standards/CORE-WEB-VITALS.md) — LCP, INP, CLS
+- [standards/TESTING-TDD.md](../standards/TESTING-TDD.md) — Test komponen & E2E
+- [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md) — UI hak subjek data & consent

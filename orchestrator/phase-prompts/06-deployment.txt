@@ -10,6 +10,7 @@ Steps:
 3. Configure SSL if needed
 4. Deploy to server
 5. Verify deployment is working
+   - SRE go-live gate (RULES #18): docs/SLO.md, uptime monitoring + tested alerts, off-site backup with a PASSED restore drill (standards/SRE-RELIABILITY.md)
 6. Get user confirmation
 7. Update templates/progress.md with results
 

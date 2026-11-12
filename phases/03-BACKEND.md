@@ -30,6 +30,11 @@
 - **WAJIB**: Supply-chain gate — exact pin, lockfile, CI scan, install scripts off ([aturan #17](../RULES-OF-THE-GAME.md#17-supply-chain--dependency-security--wajib), [SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md))
 - **WAJIB**: Endpoint agregat untuk chart (`GET /api/{resource}/stats`) di modul dengan data numerik ([UX-09](../standards/UI-UX-STANDARDS.md#-data-visualization-wajib))
 - **WAJIB**: Endpoint export (jika ada) mendukung password opsional + enkripsi native ([EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md))
+- **WAJIB**: Config & secret hanya via env — **TF-III** nol secret/config per-deploy di kode, `.env.example` lengkap, validasi env saat startup ([TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md))
+- **WAJIB**: Keamanan aplikasi OWASP **ASVS 5.0 L2** (L3 untuk module data pribadi spesifik) — terutama otorisasi per object & tenant isolation di repository ([OWASP-ASVS.md](../standards/OWASP-ASVS.md))
+- **WAJIB**: TDD untuk logika bisnis (Red → Green → Refactor), minimum test per module, CI hard-fail bila test gagal / coverage turun ([TESTING-TDD.md](../standards/TESTING-TDD.md))
+- **WAJIB**: Endpoint hak subjek data + job retensi hard-delete/anonimisasi + tabel consent ([aturan #19](../RULES-OF-THE-GAME.md#19-pelindungan-data-pribadi-uu-pdp-272022--pp-332026--wajib), [DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md))
+- **WAJIB**: `GET /api/health` + structured JSON logging ([aturan #18](../RULES-OF-THE-GAME.md#18-sre--slo-monitoring--backup-teruji--wajib), [SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md))
 - **LARANGAN**: Hardcoded data di response
 - **LARANGAN**: Logic di controller (pindahkan ke service)
 
@@ -303,6 +308,57 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 ```
 
+### Langkah 6b: Test-Driven Development & CI Gate (WAJIB)
+
+Detail teori & threshold: [standards/TESTING-TDD.md](../standards/TESTING-TDD.md)
+
+- Tulis test **sebelum** kode untuk setiap service method berlogika bisnis: 🔴 red → 🟢 minimal code → 🔵 refactor
+- Minimum **per module** (menggantikan angka tetap "9 unit test" dari project sebelumnya — sekarang berskala dengan jumlah module):
+  - [ ] ≥ 3 unit test per method service berlogika bisnis (happy + failure + edge)
+  - [ ] Integration test CRUD lengkap: list/paginasi, create valid & invalid, update, soft delete, `trashed`, restore
+  - [ ] Test otorisasi: user/tenant lain **ditolak** untuk read/update/delete/restore (ASVS-C3)
+  - [ ] Test listener untuk setiap event antar module
+  - [ ] Regression test untuk setiap bug yang diperbaiki
+- Integration test jalan terhadap **engine DB yang sama dengan production** (service container di CI)
+- Coverage: logika bisnis kritis ≥ 80% line / 70% branch, backend keseluruhan ≥ 70%, diff coverage PR ≥ 80%
+- CI **hard-fail** bila test gagal atau coverage di bawah threshold; branch protection: status check wajib
+
+### Langkah 6c: Keamanan Aplikasi — OWASP ASVS (WAJIB)
+
+Gunakan checklist prioritas [standards/OWASP-ASVS.md](../standards/OWASP-ASVS.md) sebagai *definition of done* per module:
+- [ ] Auth (V6): bcrypt/argon2id, cek password bocor, throttle per akun, MFA admin, reset token sekali pakai
+- [ ] Session (V7/V9): cookie HttpOnly/Secure/SameSite, regenerate saat login, re-auth aksi sensitif, CSRF
+- [ ] Access control (V8): deny-by-default, policy per object, **tenant scope di repository** (karena No-FK), `trashed`/`restore` ikut dicek
+- [ ] Input (V1/V2): validasi server-side, query parameterized, aturan bisnis & harga dihitung server, anti-SSRF
+- [ ] Crypto/secrets (V11–V13): TF-III, TLS ke DB, enkripsi kolom data spesifik
+- [ ] Error/logging (V16): `APP_DEBUG=false`, event keamanan dilog, tanpa PII/secret di log
+- [ ] File upload (V5) & API (V4): allowlist + magic bytes, simpan private, pagination max, CORS allowlist
+
+Ini lapisan **aplikasi** — melengkapi, bukan digantikan oleh, Cloudflare di edge ([SECURITY-CLOUDFLARE.md](../standards/SECURITY-CLOUDFLARE.md)).
+
+### Langkah 6d: Pelindungan Data Pribadi — Endpoint & Job (WAJIB bila ada data pribadi)
+
+Detail: [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md)
+
+- [ ] Tabel `consents` (append-only) + `privacy_requests` (dengan `due_at` = 3 × 24 jam & alert)
+- [ ] Endpoint hak subjek data:
+  - `POST /api/me/data-export` (akses & portabilitas, JSON/CSV, job async + signed URL)
+  - `PATCH /api/me` + `POST /api/me/privacy-requests` (`rectification` / `erasure` / `objection` / `restriction`)
+  - `DELETE /api/me/consents/{purpose}` (tarik consent → hentikan pemrosesan < 3 × 24 jam)
+  - `POST /api/decisions/{id}/human-review` (bila ada keputusan otomatis berdampak)
+- [ ] Job terjadwal `privacy:purge` — **hard-delete / anonimisasi** data lewat retensi & soft-deleted lewat grace period
+  (soft delete aturan #3 tetap dipakai sebagai jaring pengaman, tapi **bukan** penghapusan kepatuhan); cascade ke tabel
+  turunan & file di storage dikerjakan service layer (No-FK); heartbeat ke uptime monitor
+- [ ] Enkripsi kolom untuk data spesifik; log event keamanan untuk deteksi kebocoran (PDP-B1)
+- [ ] `docs/RETENTION-POLICY.md` & `docs/ROPA.md` diperbarui untuk module baru
+
+### Langkah 6e: Health Check & Structured Logging (WAJIB)
+
+Detail: [standards/SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md) SRE-01 & SRE-02
+- [ ] `GET /api/health` — cek DB (+ Redis/queue), `200`/`503`, sertakan `version` (commit SHA), **tanpa** detail exception
+- [ ] Log JSON ke stdout/stderr dengan `request_id`, `route`, `status`, `duration_ms`, `user_id`/`tenant_id` — tanpa secret/PII
+- [ ] Error tracking (Sentry) dengan release = commit SHA
+
 ### Langkah 7: API Documentation
 
 Dokumentasi API yang jelas untuk frontend developer.
@@ -347,6 +403,11 @@ Setelah fase ini selesai:
 - [x] Identifier, komentar, tabel/kolom dalam bahasa Inggris
 - [x] Endpoint stats untuk chart & export (password opsional) tersedia sesuai kebutuhan modul
 - [x] Supply-chain baseline aktif (exact pin, lockfile, CI scan, install scripts off, SBOM)
+- [x] TF-III: tidak ada secret/config di kode, `.env.example` lengkap ([TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md))
+- [x] Test minimum per module terpenuhi, CI test + coverage gate hijau ([TESTING-TDD.md](../standards/TESTING-TDD.md))
+- [x] Checklist ASVS L2 (L3 module data spesifik) terpenuhi ([OWASP-ASVS.md](../standards/OWASP-ASVS.md))
+- [x] Endpoint hak subjek data, consent, job retensi `privacy:purge` aktif (jika ada data pribadi) ([DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md))
+- [x] `/api/health` + structured logging + error tracking aktif ([SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md))
 
 ---
 
@@ -362,4 +423,9 @@ Setelah backend selesai dan API bisa diakses, update progress dan lanjut ke [04-
 - [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md) — Aturan database
 - [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md) — Pinning, lockfile, scan, SBOM
 - [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) — Enkripsi export DOCX/PDF/XLSX
+- [standards/TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md) — Config via env, stateless, build/release/run
+- [standards/TESTING-TDD.md](../standards/TESTING-TDD.md) — TDD, test pyramid, coverage gate
+- [standards/OWASP-ASVS.md](../standards/OWASP-ASVS.md) — Keamanan level aplikasi
+- [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md) — Hak subjek data, retensi, consent
+- [standards/SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md) — Health check & logging
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan soft delete & no FK

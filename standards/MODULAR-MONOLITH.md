@@ -377,9 +377,24 @@ class ProductApiTest extends TestCase
 
 ---
 
+## 🧩 Twelve-Factor Alignment
+
+Modular Monolith **memenuhi Faktor I (Codebase)** Twelve-Factor: satu app = satu codebase, banyak deploy
+(local/staging/production). Twelve-Factor tidak mewajibkan "satu codebase per service" — itu hanya konsekuensi
+bila sistem memang terdiri dari banyak app. Module internal (`modules/*`) adalah bagian satu app, bukan app terpisah.
+Satu artefak yang sama juga bisa dijalankan sebagai beberapa process type (`web`, `worker`, `scheduler`) untuk
+scale horizontal (Faktor VIII) tanpa memecah ke microservices.
+
+Teori lengkap 12 faktor & rekonsiliasinya: [TWELVE-FACTOR.md](TWELVE-FACTOR.md#-rekonsiliasi-eksplisit--aturan-sainskerta--twelve-factor).
+Standar testing lengkap (TDD, test pyramid, coverage gate): [TESTING-TDD.md](TESTING-TDD.md).
+
+---
+
 ## 🔗 Referensi
 
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan modular monolith
 - [standards/SAINSKERTA-RULES.md](SAINSKERTA-RULES.md) — Detail aturan no foreign keys
 - [standards/DATABASE-RULES.md](DATABASE-RULES.md) — Aturan database
 - [phases/03-BACKEND.md](../phases/03-BACKEND.md) — Implementasi backend
+- [standards/TWELVE-FACTOR.md](TWELVE-FACTOR.md) — Twelve-Factor App & rekonsiliasi
+- [standards/TESTING-TDD.md](TESTING-TDD.md) — TDD & coverage gate

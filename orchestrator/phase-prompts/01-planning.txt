@@ -9,6 +9,8 @@ Steps:
 2. Analyze requirements from user_requirement.md
 3. Break down architecture and components
 4. Create detailed implementation plan
+   - DPIA screening (7 questions), initial docs/ROPA.md, DPO decision per standards/DATA-PROTECTION-ID.md (RULES #19)
+   - Agree SLO tier (standards/SRE-RELIABILITY.md) and ASVS level per module (standards/OWASP-ASVS.md)
 5. Update templates/progress.md with results
 
 Allowed tools: Read(*), Write(*), Edit(*), Bash(*)
