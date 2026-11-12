@@ -14,6 +14,7 @@
 6. Health check endpoint
 7. Monitoring setup
 8. Cloudflare edge security & anti-abuse (WAJIB sebelum go-live)
+9. SRE go-live gate: SLO terdefinisi, monitoring aktif, restore drill backup terbukti (WAJIB sebelum go-live)
 
 > **🧷 Fleksibilitas Deployment & Database (WAJIB):** Platform yang dibangun Loop harus bisa
 > deploy di **Vercel** ATAU **di luar Vercel** (Hostinger, Domainesia, VPS, shared hosting)
@@ -261,6 +262,24 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST https://project.com/api/auth/re
   -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"x"}'
 ```
 
+### Langkah 9: SRE Go-Live Gate — SLO, Monitoring, Restore Drill (WAJIB)
+
+> **Tidak boleh go-live sebelum semua item di bawah ✅.** Detail: [standards/SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md) ·
+> [aturan #18](../RULES-OF-THE-GAME.md#18-sre--slo-monitoring--backup-teruji--wajib)
+>
+> Gate ini ada karena sebuah project dari workflow ini pernah **shipped tanpa monitoring dan tanpa rutinitas backup** —
+> Langkah 5 & 7 di atas saja ternyata mudah terlewat. Langkah 5 (backup), 6 (health check), dan 7 (monitoring) tetap
+> dikerjakan; langkah ini **membuktikan** hasilnya.
+
+- [ ] **SLO terdefinisi** — `docs/SLO.md`: tier (T1 internal / T2 standar / T3 SaaS berbayar), SLI & SLO (availability, p95 latency, error rate), error budget policy (habis = freeze fitur), SLA (hanya bila kontrak meminta), RPO/RTO, owner on-call
+- [ ] **Health check** — `GET /api/health` (standar SRE-01: cek DB, `503` saat gagal, `version` = commit SHA, **tanpa** pesan exception — contoh di Langkah 6 yang mengembalikan `$e->getMessage()` harus diganti)
+- [ ] **Monitoring aktif** — uptime monitor (default **Better Stack**; alternatif UptimeRobot / Healthchecks.io) untuk `/api/health` + halaman utama dari ≥ 2 lokasi, heartbeat untuk job backup & scheduler, monitor SSL expiry
+- [ ] **Logging & error tracking** — structured JSON log terkirim ke aggregator; Sentry aktif dengan release = SHA
+- [ ] **Alert diuji** — trigger alert uji (mis. matikan health sementara di staging) dan pastikan diterima di channel tim
+- [ ] **Backup off-site terenkripsi** — harian (PITR untuk T3), aturan 3-2-1, retensi terdefinisi
+- [ ] **Restore drill LULUS** — restore backup off-site ke environment terpisah, app jalan, alur kritis diverifikasi, durasi ≤ RTO; tercatat di `docs/restore-drill-log.md`. **"Backup ada" tanpa drill = gate gagal.**
+- [ ] **Postmortem** — template blameless tersedia di `docs/postmortems/`
+
 ---
 
 ## ✅ Output Fase 06
@@ -274,6 +293,7 @@ Setelah fase ini selesai:
 - [x] Health check endpoint berfungsi
 - [x] Monitoring sudah aktif
 - [x] Cloudflare edge security lulus (CF-01..CF-09, semua item WAJIB ✅)
+- [x] SRE go-live gate lulus: SLO terdefinisi, monitoring + alert aktif & teruji, restore drill backup terbukti
 - [x] User sudah bisa akses project di production
 
 ---
@@ -290,3 +310,5 @@ Setelah deploy sukses, update progress dan lanjut ke fase maintenance [07-IMPROV
 - [phases/07-IMPROVEMENT.md](07-IMPROVEMENT.md) — Fase maintenance
 - [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md) — Backup strategy
 - [standards/SECURITY-CLOUDFLARE.md](../standards/SECURITY-CLOUDFLARE.md) — Cloudflare edge security & anti-abuse
+- [standards/SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md) — SLI/SLO/SLA, error budget, monitoring, restore drill, postmortem
+- [standards/TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md) — Build/release/run, config via env, logs sebagai event stream

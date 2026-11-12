@@ -304,6 +304,11 @@ find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
 ### Restore Test
 Setiap 3 bulan: test restore untuk memastikan backup berfungsi.
 
+> **Diperketat oleh [SRE-RELIABILITY.md](SRE-RELIABILITY.md) SRE-05:** backup off-site terenkripsi (3-2-1),
+> **restore drill WAJIB lulus sebelum go-live** lalu minimal tiap 3 bulan, hasil dicatat di `docs/restore-drill-log.md`
+> dengan durasi dibandingkan RTO. Retensi backup harus selaras dengan kebijakan retensi data pribadi
+> ([DATA-PROTECTION-ID.md](DATA-PROTECTION-ID.md)).
+
 ---
 
 ## 🔐 Security
@@ -313,6 +318,22 @@ Setiap 3 bulan: test restore untuk memastikan backup berfungsi.
 3. **Rotasi database credentials** — setiap 90 hari
 4. **Limit database user** — hanya grant privileges yang diperlukan
 5. **Database hanya accessible dari app server** — jangan expose ke public
+
+---
+
+## 🧩 Twelve-Factor Alignment
+
+- **Faktor IV (Backing services sebagai attached resource):** database bisa ditukar tanpa ubah kode **karena**
+  DB-Agnostic Repository Layer (§5 di atas) + **No-FK** + soft delete berbasis kolom — tidak ada FK constraint, cascade,
+  trigger, atau fitur vendor-spesifik yang tertanam di logika app. Referential integrity & cascade hidup di service layer,
+  jadi ikut pindah bersama kode saat engine diganti.
+- **Faktor III (Config):** koneksi via `.env` diformalkan menjadi **TF-III** — nol secret/config per-deploy di kode yang di-commit.
+- **Faktor X (Dev/prod parity):** engine DB dev/CI sama dengan production; migration multi-engine diuji di CI.
+
+Detail & rekonsiliasi: [TWELVE-FACTOR.md](TWELVE-FACTOR.md#-rekonsiliasi-eksplisit--aturan-sainskerta--twelve-factor).
+
+> **Soft delete ≠ penghapusan kepatuhan.** Kolom `deleted_at` adalah jaring pengaman operasional. Untuk data pribadi,
+> tetap wajib job hard-delete/anonimisasi setelah masa retensi — lihat [DATA-PROTECTION-ID.md](DATA-PROTECTION-ID.md).
 
 ---
 
@@ -337,3 +358,6 @@ Setiap 3 bulan: test restore untuk memastikan backup berfungsi.
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan database
 - [standards/SAINSKERTA-RULES.md](SAINSKERTA-RULES.md) — Detail no foreign keys
 - [phases/03-BACKEND.md](../phases/03-BACKEND.md) — Implementasi backend & migration
+- [standards/TWELVE-FACTOR.md](TWELVE-FACTOR.md) — Twelve-Factor App (Faktor III, IV, X)
+- [standards/SRE-RELIABILITY.md](SRE-RELIABILITY.md) — Backup & restore drill
+- [standards/DATA-PROTECTION-ID.md](DATA-PROTECTION-ID.md) — Retensi & hard-delete data pribadi

@@ -10,6 +10,8 @@ Steps:
 3. Integrate with backend API
 4. Follow UI/UX standards (sidebar 1 color icon, CRUD one page with drawer modal)
    - i18n id/en/ja + language switcher, proportional icons + charts, "?" driver.js tour, password-protected export (RULES #14-16)
+   - Core Web Vitals techniques per standards/CORE-WEB-VITALS.md; component tests + Playwright smoke per standards/TESTING-TDD.md
+   - "Privacy & My Data" page (consent, export, erasure) if personal data is processed (standards/DATA-PROTECTION-ID.md)
 5. Update templates/progress.md with results
 
 Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

@@ -40,6 +40,10 @@ Setiap tabel harus punya kolom `deleted_at` (TIMESTAMP nullable). Data tidak per
 - Endpoint `PATCH /api/{resource}/{id}/restore` — restore data
 - Cascade delete di handle aplikasi (bukan database)
 
+> **Catatan kepatuhan (aturan #19):** soft delete adalah jaring pengaman **operasional**, bukan mekanisme
+> penghapusan untuk kepatuhan UU PDP. Data pribadi tetap wajib di-hard-delete / dianonimisasi oleh job
+> retensi atau permintaan penghapusan subjek data — lihat [standards/DATA-PROTECTION-ID.md](standards/DATA-PROTECTION-ID.md).
+
 ### 4. CRUD in One Page — WAJIB
 Tidak ada halaman terpisah untuk create, edit, list. Semua dalam satu halaman.
 
@@ -107,6 +111,10 @@ TIDAK BOLEH deploy sebelum fase audit selesai. Audit mencakup:
 - UI/UX consistency
 - Mobile responsiveness
 - Database optimization
+- Keamanan aplikasi OWASP ASVS 5.0 (L2 default, L3 untuk data spesifik) — [standards/OWASP-ASVS.md](standards/OWASP-ASVS.md)
+- Core Web Vitals (LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1) via Lighthouse CI / PSI — [standards/CORE-WEB-VITALS.md](standards/CORE-WEB-VITALS.md)
+- Test & coverage gate CI hijau (TDD) — [standards/TESTING-TDD.md](standards/TESTING-TDD.md)
+- Twelve-Factor (terutama TF-III: nol secret/config di kode) — [standards/TWELVE-FACTOR.md](standards/TWELVE-FACTOR.md)
 
 ### 12. UX Heuristic Benchmark ≥ 9.0/10 — WAJIB
 Setiap wireframe & mockup **WAJIB** di-score terhadap 3 framework UX sebelum ditampilkan ke user:
@@ -182,23 +190,50 @@ Gate **pass/fail** — dicek di fase Backend (setup) dan Audit (sebelum deploy).
 
 Detail: [standards/SUPPLY-CHAIN-SECURITY.md](standards/SUPPLY-CHAIN-SECURITY.md)
 
+### 18. SRE — SLO, Monitoring & Backup Teruji — WAJIB
+Setiap project yang go-live **WAJIB** punya reliability yang **terukur**, bukan asumsi. Aturan ini menutup gap nyata:
+sebuah project dari workflow ini pernah **shipped tanpa monitoring dan tanpa rutinitas backup**.
+
+**Minimal:** `docs/SLO.md` (tier, SLI, SLO, error budget policy, RPO/RTO) · `GET /api/health` (cek DB, 503 saat gagal) ·
+structured JSON logging + error tracking · uptime monitor (default **Better Stack**; alternatif UptimeRobot / Healthchecks.io) ·
+alert SLO breach ke channel tim (diuji) · backup harian off-site terenkripsi **+ restore drill yang LULUS dan tercatat** ·
+template postmortem blameless.
+
+Error budget habis → **freeze fitur baru**, prioritaskan reliability. Gate **pass/fail** di fase Deployment — "backup ada" tanpa restore drill = **tidak lulus**.
+
+Detail: [standards/SRE-RELIABILITY.md](standards/SRE-RELIABILITY.md) · Gate: [phases/06-DEPLOYMENT.md](phases/06-DEPLOYMENT.md)
+
+### 19. Pelindungan Data Pribadi (UU PDP 27/2022 + PP 33/2026) — WAJIB
+Setiap project yang memproses data pribadi **WAJIB** patuh UU PDP (berlaku penuh sejak 17 Okt 2024) dan siap
+PP 33/2026 (berlaku 16 Jan 2027).
+
+**Minimal:** skrining DPIA di Planning (DPIA wajib bila risiko tinggi) · ROPA hidup per project · consent eksplisit per tujuan
++ penarikan yang mudah · kebijakan retensi + job **hard-delete/anonimisasi** · UI/API nyata untuk hak subjek data (akses,
+koreksi, hapus, keberatan, portabilitas, tarik consent) dengan tenggat **3 × 24 jam** · deteksi & runbook kebocoran data —
+notifikasi ke **subjek data & Lembaga PDP ≤ 3 × 24 jam** · keputusan kebutuhan DPO dicatat · ASVS **L3** untuk module data spesifik.
+
+> **Soft delete (aturan #3) ≠ penghapusan untuk kepatuhan.** `deleted_at` adalah jaring pengaman operasional;
+> penghapusan nyata (hard-delete setelah retensi / anonimisasi) tetap wajib — aturan #3 tidak berubah, ini lapisan tambahan.
+
+Detail: [standards/DATA-PROTECTION-ID.md](standards/DATA-PROTECTION-ID.md) · Keamanan aplikasi: [standards/OWASP-ASVS.md](standards/OWASP-ASVS.md)
+
 ---
 
 ## 🟡 Aturan Anjuran (Recommendations)
 
-### 18. Database Migration Wajib
+### 20. Database Migration Wajib
 Gunakan migration system. Jangan edit schema manual di database.
 
-### 19. Seeder untuk Development — Tapi Jangan di Frontend
+### 21. Seeder untuk Development — Tapi Jangan di Frontend
 Seeder untuk populate database development itu BOLEH. Tapi frontend tetap nunggu data dari API.
 
-### 20. Snake_case untuk Database
+### 22. Snake_case untuk Database
 Semua nama tabel, kolom menggunakan `snake_case`. Bukan `camelCase` atau `PascalCase`.
 
-### 21. Git Wajib
+### 23. Git Wajib
 Setiap project harus version controlled dengan Git. Commit minimal per fase selesai.
 
-### 22. Progress Tracking
+### 24. Progress Tracking
 File `progress.md` WAJIB diupdate setiap kali ada perubahan status. Ini satu-satunya source of truth progress project.
 
 ---
@@ -210,6 +245,8 @@ File `progress.md` WAJIB diupdate setiap kali ada perubahan status. Ini satu-sat
 - [ ] User sudah siapkan requirement dasar (user_requirement.md)
 - [ ] Folder project sudah di-setup
 - [ ] Loop workflow sudah siap
+- [ ] Skrining DPIA dijawab, ROPA awal dibuat, kebutuhan DPO diputuskan (aturan #19)
+- [ ] Tier SLO project disepakati dengan user (aturan #18)
 
 ## 📋 Checklist Sebelum Deploy
 
@@ -241,4 +278,17 @@ File `progress.md` WAJIB diupdate setiap kali ada perubahan status. Ini satu-sat
   - [ ] Install scripts allowlist ter-review
   - [ ] Docker image pinned by digest
   - [ ] SBOM tersimpan sebagai artifact release
+- [ ] **SRE (aturan #18)** — detail [standards/SRE-RELIABILITY.md](standards/SRE-RELIABILITY.md):
+  - [ ] `docs/SLO.md` lengkap (tier, SLI/SLO, error budget policy, RPO/RTO, on-call)
+  - [ ] `/api/health` + structured logging + error tracking aktif
+  - [ ] Uptime monitor + alert SLO breach aktif & sudah diuji
+  - [ ] Backup off-site terenkripsi + **restore drill LULUS** tercatat
+- [ ] **Data pribadi (aturan #19)** — detail [standards/DATA-PROTECTION-ID.md](standards/DATA-PROTECTION-ID.md):
+  - [ ] DPIA disetujui (bila wajib) · ROPA sesuai kondisi akhir
+  - [ ] Consent & penarikan berfungsi · endpoint hak subjek data lulus test
+  - [ ] Job retensi hard-delete/anonimisasi aktif · runbook breach 3 × 24 jam tersedia
+- [ ] **OWASP ASVS** L2 (L3 module data spesifik) lulus — [standards/OWASP-ASVS.md](standards/OWASP-ASVS.md)
+- [ ] **Core Web Vitals** semua halaman yang diukur lulus — [standards/CORE-WEB-VITALS.md](standards/CORE-WEB-VITALS.md)
+- [ ] **Testing:** CI test + coverage gate hijau — [standards/TESTING-TDD.md](standards/TESTING-TDD.md)
+- [ ] **Twelve-Factor:** TF-III (nol secret di kode, `.env.example` lengkap) — [standards/TWELVE-FACTOR.md](standards/TWELVE-FACTOR.md)
 - [ ] User sudah approve deployment

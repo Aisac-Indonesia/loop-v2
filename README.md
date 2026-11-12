@@ -86,7 +86,14 @@ sainskerta-loop-workflow-v2/
 │   ├── MODULAR-MONOLITH.md
 │   ├── UI-UX-STANDARDS.md
 │   ├── DATABASE-RULES.md
-│   └── AI-PROVIDERS.md
+│   ├── AI-PROVIDERS.md
+│   ├── TWELVE-FACTOR.md          ← Twelve-Factor App + rekonsiliasi
+│   ├── SRE-RELIABILITY.md        ← SLO, monitoring, restore drill
+│   ├── OWASP-ASVS.md             ← Keamanan aplikasi (ASVS 5.0)
+│   ├── CORE-WEB-VITALS.md        ← LCP / INP / CLS
+│   ├── DATA-PROTECTION-ID.md     ← UU PDP + PP 33/2026
+│   ├── TESTING-TDD.md            ← TDD & coverage gate
+│   └── ISO-27001-27701.md        ← ISO 27001/27701 (aspirasional)
 ├── templates/                    ← Template file
 │   ├── progress.md
 │   ├── user_requirement.md

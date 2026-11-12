@@ -10,6 +10,7 @@ Steps:
 3. Perform performance audit
 4. Conduct code review
    - Run English-only code grep check and supply-chain checklist (phases/05-AUDIT.md sections 8-9)
+   - Core Web Vitals via Lighthouse CI/PSI, OWASP ASVS, test/coverage gate, data protection, Twelve-Factor (sections 10-14)
 5. Generate audit report
 6. Present findings for user review
 7. Update templates/progress.md with results

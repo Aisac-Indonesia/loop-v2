@@ -12,6 +12,11 @@ Steps:
    - English-only identifiers/comments/table names (RULES #15)
    - Supply-chain baseline per standards/SUPPLY-CHAIN-SECURITY.md (RULES #17)
    - Export endpoints with optional password per standards/EXPORT-STANDARDS.md
+   - TDD + per-module test minimum + CI coverage gate per standards/TESTING-TDD.md
+   - OWASP ASVS 5.0 L2 (L3 for special-category data modules) per standards/OWASP-ASVS.md
+   - No secrets/config in code (TF-III) per standards/TWELVE-FACTOR.md
+   - Data-subject-rights endpoints, consent, retention hard-delete/anonymization job per standards/DATA-PROTECTION-ID.md (RULES #19)
+   - /api/health + structured JSON logging per standards/SRE-RELIABILITY.md (RULES #18)
 5. Update templates/progress.md with results
 
 Allowed tools: Read(*), Write(*), Edit(*), Bash(*)

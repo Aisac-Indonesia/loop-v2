@@ -265,3 +265,6 @@ syft <image>@sha256:<digest> -o spdx-json=sbom-image.spdx.json           # untuk
 - [standards/SECURITY-CLOUDFLARE.md](SECURITY-CLOUDFLARE.md) — Keamanan edge (lapisan berbeda, saling melengkapi)
 - [OpenSSF Package Manager Best Practices](https://github.com/ossf/package-manager-best-practices)
 - [GitHub Changelog — npm v12 install-time security](https://github.blog/changelog/2026-07-07-npm-install-time-security-and-gat-bypass2fa-deprecation)
+- [standards/OWASP-ASVS.md](OWASP-ASVS.md) — Keamanan lapisan aplikasi (V15 Secure Coding & Architecture mencakup dependency)
+- [standards/ISO-27001-27701.md](ISO-27001-27701.md) — Supplier relationships (Annex A 5.19–5.23)
+- [standards/TWELVE-FACTOR.md](TWELVE-FACTOR.md) — Faktor II (Dependencies) & V (Build, release, run)

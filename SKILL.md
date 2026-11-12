@@ -802,6 +802,13 @@ Kirim format: "DEPLOY: [IP]:[port] [user] domain:[domain.com]"
 | `standards/UI-UX-STANDARDS.md` | Standar UI/UX | Workflow #5 (Reject/revisi wireframe) |
 | `standards/DATABASE-RULES.md` | Standar database | Workflow #1 (DB integration) |
 | `standards/AI-PROVIDERS.md` | Standar AI provider | Workflow #1 (Init — arsitektur) |
+| `standards/TWELVE-FACTOR.md` | Twelve-Factor App (teori lengkap + rekonsiliasi) | Workflow #1 (Init — arsitektur), Deploy |
+| `standards/SRE-RELIABILITY.md` | SLI/SLO/SLA, error budget, monitoring, restore drill, postmortem | Workflow #8 (Deploy integration) |
+| `standards/OWASP-ASVS.md` | Keamanan aplikasi OWASP ASVS 5.0 | Backend & Audit |
+| `standards/CORE-WEB-VITALS.md` | LCP / INP / CLS + Lighthouse CI | Frontend & Audit |
+| `standards/DATA-PROTECTION-ID.md` | UU PDP 27/2022 + PP 33/2026 (DPIA, ROPA, hak subjek data) | Planning, Backend & Audit |
+| `standards/TESTING-TDD.md` | TDD, test pyramid, coverage gate | Backend, Frontend & Audit |
+| `standards/ISO-27001-27701.md` | ISO 27001/27701 sebagai kerangka kematangan | Referensi (aspirasional) |
 
 ---
 
@@ -836,7 +843,14 @@ sainskerta-loop-workflow/
 │   ├── MODULAR-MONOLITH.md       ← (Saran)
 │   ├── UI-UX-STANDARDS.md        ← (Saran)
 │   ├── DATABASE-RULES.md         ← (Saran)
-│   └── AI-PROVIDERS.md           ← (Saran)
+│   ├── AI-PROVIDERS.md           ← (Saran)
+│   ├── TWELVE-FACTOR.md          ← (Saran)
+│   ├── SRE-RELIABILITY.md        ← (Saran)
+│   ├── OWASP-ASVS.md             ← (Saran)
+│   ├── CORE-WEB-VITALS.md        ← (Saran)
+│   ├── DATA-PROTECTION-ID.md     ← (Saran)
+│   ├── TESTING-TDD.md            ← (Saran)
+│   └── ISO-27001-27701.md        ← (Saran)
 └── scripts/
     ├── setup-workflow.sh         ← (Opsional) Setup script
     └── monitor.sh                ← (Opsional) Monitoring script

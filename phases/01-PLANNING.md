@@ -62,6 +62,28 @@ Silakan jawab di user_requirement.md ya!
 - Iterasi sampai semua jelas
 - **Jangan lanjut sebelum semua keputusan firm**
 
+### Langkah 3b: Skrining Data Pribadi (DPIA), Tier SLO & Level ASVS (WAJIB)
+
+Detail: [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md) · [standards/SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md) · [standards/OWASP-ASVS.md](../standards/OWASP-ASVS.md)
+
+**Skrining DPIA** — tanyakan ke user, jawab ya/tidak. **Satu "ya" → DPIA wajib** (`docs/DPIA.md`) sebelum fase Backend dimulai,
+dan module terkait memakai **ASVS L3**:
+1. [ ] Ada **keputusan otomatis** yang berakibat hukum / berdampak signifikan bagi orang (approval kredit, seleksi otomatis, scoring)?
+2. [ ] Memproses **data pribadi spesifik**: kesehatan, biometrik, genetika, catatan kejahatan, **data anak**, keuangan pribadi?
+3. [ ] Memproses data pribadi dalam **skala besar** (dinilai kontekstual: jumlah subjek, volume, durasi, cakupan wilayah)?
+4. [ ] Ada **evaluasi, penskoran, atau pemantauan sistematis** (profiling, tracking perilaku, monitoring karyawan)?
+5. [ ] Ada **pencocokan/penggabungan** beberapa sumber data pribadi?
+6. [ ] Memakai **teknologi baru** atas data pribadi (AI/ML, IoT, face recognition)?
+7. [ ] Pemrosesan bisa **membatasi pelaksanaan hak** subjek data?
+
+**Pertanyaan pendukung:**
+- [ ] Kategori data pribadi apa saja yang dikumpulkan, dari siapa, untuk tujuan apa, dasar hukumnya apa? → isi **`docs/ROPA.md` awal**
+- [ ] Apakah klien wajib menunjuk **DPO** (pelayanan publik / pemantauan sistematis skala besar / data spesifik skala besar)? Catat nama/kontak DPO
+- [ ] Ada data yang disimpan/diproses di luar Indonesia (hosting, email, AI provider)? → catat mekanisme transfer
+- [ ] Masa retensi per kategori data (dasar `docs/RETENTION-POLICY.md`)
+- [ ] **Tier SLO** project: T1 internal tool / T2 aplikasi klien standar / T3 SaaS berbayar — siapa user, jam pakai, dampak bila down 1 jam?
+- [ ] Apakah kontrak klien mensyaratkan **SLA**?
+
 ### Langkah 4: Buat Project Structure
 
 Berdasarkan arsitektur yang dipilih, buat struktur folder:
@@ -155,6 +177,8 @@ Setelah fase ini selesai:
 - [x] Environment sudah ter-setup
 - [x] Roadmap sudah dibuat
 - [x] User sudah setuju dengan keputusan arsitektur
+- [x] Skrining DPIA dijawab (DPIA dijadwalkan bila wajib), ROPA awal dibuat, kebutuhan DPO diputuskan
+- [x] Tier SLO & level ASVS per module disepakati
 
 ---
 
@@ -171,3 +195,7 @@ Setelah semua keputusan arsitektur firm, update progress dan lanjut ke [02-WIREF
 - [standards/MODULAR-MONOLITH.md](../standards/MODULAR-MONOLITH.md) — Arsitektur modular
 - [standards/UI-UX-STANDARDS.md](../standards/UI-UX-STANDARDS.md) — Standar UI/UX yang akan dipake di wireframe
 - [templates/user_requirement.md](../templates/user_requirement.md) — Template requirement
+- [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md) — Skrining DPIA, ROPA, DPO
+- [standards/SRE-RELIABILITY.md](../standards/SRE-RELIABILITY.md) — Memilih tier SLO
+- [standards/OWASP-ASVS.md](../standards/OWASP-ASVS.md) — Level verifikasi L1/L2/L3
+- [standards/TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md) — Prinsip codebase, config & deploy

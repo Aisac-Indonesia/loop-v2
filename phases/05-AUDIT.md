@@ -15,6 +15,11 @@
 7. Database optimization
 8. Code language check (English-only code)
 9. Supply-chain & dependency security
+10. Core Web Vitals (pasangan kuantitatif UX Heuristic Benchmark)
+11. OWASP ASVS 5.0 — keamanan level aplikasi
+12. Testing & coverage gate (TDD)
+13. Pelindungan data pribadi (UU PDP + PP 33/2026)
+14. Twelve-Factor & config hygiene
 
 ---
 
@@ -52,6 +57,7 @@
 - [ ] Asset (JS, CSS, image) di-minify
 - [ ] Caching untuk data yang jarang berubah
 - [ ] Lazy loading untuk komponen berat
+- [ ] Core Web Vitals diukur & lulus — lihat **□ 10** di bawah
 
 ### □ 3. Code Review
 
@@ -167,6 +173,55 @@ Detail & perintah: [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAI
 - [ ] SC-09 SBOM release ter-generate
 - [ ] SC-10 Token CI least-privilege, tidak ada long-lived publish token
 
+### □ 10. Core Web Vitals
+
+Standar: [standards/CORE-WEB-VITALS.md](../standards/CORE-WEB-VITALS.md). Ini **pasangan kuantitatif** dari UX Heuristic Benchmark
+([aturan #12](../RULES-OF-THE-GAME.md#12-ux-heuristic-benchmark--9010--wajib), fase 02): heuristic menilai *mudah dipakai*, CWV menilai *cepat & stabil*.
+
+- [ ] **CWV-01** Lighthouse CI (`lhci autorun`) atau PageSpeed Insights API dijalankan untuk login, dashboard, dan ≥ 1 halaman CRUD per module utama — mobile & desktop
+- [ ] **CWV-02** LCP ≤ 2.5 s · CLS ≤ 0.1 · TBT ≤ 200 ms (proxy lab) **+** INP ≤ 200 ms dari uji interaksi manual DevTools (buka drawer, submit form, filter, ganti bahasa)
+- [ ] **CWV-03** Skor dicatat di Laporan Audit; **halaman yang gagal diperbaiki & diukur ulang sebelum go-live**
+
+### □ 11. OWASP ASVS (Keamanan Aplikasi)
+
+Standar: [standards/OWASP-ASVS.md](../standards/OWASP-ASVS.md) — ASVS **5.0.0**, **L2** default, **L3** untuk module data pribadi spesifik.
+Lapisan aplikasi ini **wajib bersama** Cloudflare (edge) — tidak saling menggantikan.
+
+- [ ] Checklist prioritas A–I (auth, session, access control & tenant isolation, input, crypto/secrets, error/logging, file upload, API, dependency) lulus
+- [ ] Test otomatis tenant isolation & otorisasi object ada dan hijau
+- [ ] SAST (Semgrep/CodeQL) bersih atau exception terdokumentasi
+- [ ] OWASP ZAP baseline scan ke staging — tidak ada temuan high
+- [ ] Health check / error response tidak membocorkan detail exception
+
+### □ 12. Testing & Coverage Gate (TDD)
+
+Standar: [standards/TESTING-TDD.md](../standards/TESTING-TDD.md)
+
+- [ ] CI hard-fail aktif untuk test gagal & coverage turun; branch protection mewajibkan status check
+- [ ] Minimum test per module terpenuhi (unit service, integration CRUD + soft delete/restore, authz, event, regression)
+- [ ] Coverage: kritis ≥ 80% line / 70% branch · backend ≥ 70% · frontend ≥ 60% · diff ≥ 80%
+- [ ] Tidak ada test di-skip tanpa issue; integration test pakai engine DB production; E2E smoke hijau
+
+### □ 13. Pelindungan Data Pribadi
+
+Standar: [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md) · [aturan #19](../RULES-OF-THE-GAME.md#19-pelindungan-data-pribadi-uu-pdp-272022--pp-332026--wajib)
+
+- [ ] DPIA disetujui (bila skrining Planning = wajib); ROPA mencerminkan kondisi akhir
+- [ ] Consent eksplisit per tujuan + penarikan berfungsi (< 3 × 24 jam)
+- [ ] Endpoint & UI hak subjek data lulus test (export lengkap, erasure tanpa sisa di tabel turunan & storage)
+- [ ] Job `privacy:purge` (hard-delete/anonimisasi) aktif — soft delete saja **tidak** lulus
+- [ ] Log tanpa PII mentah; data spesifik terenkripsi kolom
+- [ ] Runbook kebocoran data + template notifikasi 3 × 24 jam ke subjek data & Lembaga PDP tersedia
+
+### □ 14. Twelve-Factor & Config Hygiene
+
+Standar: [standards/TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md)
+
+- [ ] **TF-III:** secret scanning (gitleaks/GitHub) bersih; tidak ada secret/config per-deploy di kode, CI, Dockerfile; `.env.example` lengkap
+- [ ] Session/cache/upload tidak bergantung filesystem lokal (bila multi-instance)
+- [ ] Build → release → run terpisah; rollback ke release sebelumnya terdokumentasi
+- [ ] Migration & script satu kali berupa command di repo
+
 ---
 
 ## 📋 Output Audit
@@ -188,6 +243,15 @@ Setelah audit selesai, buat laporan:
 - ✅ Database: [pass/warning/fail]
 - ✅ Code Language (English-only): [pass/warning/fail]
 - ✅ Supply Chain: [pass/fail]
+- ✅ Core Web Vitals: [pass/fail] (tabel skor per halaman di bawah)
+- ✅ OWASP ASVS (L2/L3): [pass/fail]
+- ✅ Testing & Coverage: [pass/fail] (coverage: backend __% · frontend __% · kritis __%)
+- ✅ Data Pribadi (UU PDP/PP 33): [pass/fail/N/A]
+- ✅ Twelve-Factor / TF-III: [pass/fail]
+
+### Core Web Vitals
+| Halaman | Device | LCP | TBT | INP (manual) | CLS | Status |
+|---------|--------|-----|-----|--------------|-----|--------|
 
 ### Issues Found
 1. [Issue 1] — [Severity: high/medium/low] — [Status: fixed/open]
@@ -216,6 +280,11 @@ Setelah fase ini selesai:
 - [x] Database optimized
 - [x] Code language check (English-only) lulus
 - [x] Supply-chain checklist lulus (pass/fail)
+- [x] Core Web Vitals lulus di semua halaman yang diukur, skor tercatat
+- [x] Checklist OWASP ASVS L2 (L3 untuk data spesifik) lulus
+- [x] CI test + coverage gate hijau
+- [x] Checklist data pribadi lulus (jika ada data pribadi)
+- [x] TF-III & checklist Twelve-Factor lulus
 - [x] Laporan audit dibuat
 - [x] User sudah review laporan audit
 
@@ -234,3 +303,8 @@ Setelah audit lulus dan user approves laporan, update progress dan lanjut ke [06
 - [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md) — Aturan database
 - [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md) — Gate supply-chain & dependency
 - [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) — Export dengan password
+- [standards/CORE-WEB-VITALS.md](../standards/CORE-WEB-VITALS.md) — LCP, INP, CLS & Lighthouse CI
+- [standards/OWASP-ASVS.md](../standards/OWASP-ASVS.md) — Verifikasi keamanan aplikasi
+- [standards/TESTING-TDD.md](../standards/TESTING-TDD.md) — TDD & coverage gate
+- [standards/DATA-PROTECTION-ID.md](../standards/DATA-PROTECTION-ID.md) — UU PDP & PP 33/2026
+- [standards/TWELVE-FACTOR.md](../standards/TWELVE-FACTOR.md) — Config & deploy hygiene

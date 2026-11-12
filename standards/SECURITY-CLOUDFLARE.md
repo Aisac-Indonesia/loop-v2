@@ -133,6 +133,8 @@ Buat **Rate Limiting Rules** di dashboard Cloudflare (Security → WAF → Rate 
 ## 🔗 Referensi
 
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan mutlak keamanan edge
+- [standards/OWASP-ASVS.md](OWASP-ASVS.md) — Keamanan **lapisan aplikasi** (ASVS 5.0) — wajib bersama edge, tidak saling menggantikan
+- [standards/SUPPLY-CHAIN-SECURITY.md](SUPPLY-CHAIN-SECURITY.md) — Keamanan dependency
 - [phases/05-AUDIT.md](../phases/05-AUDIT.md) — Audit keamanan aplikasi
 - [phases/06-DEPLOYMENT.md](../phases/06-DEPLOYMENT.md) — Langkah setup Cloudflare saat deploy
 - [Cloudflare Turnstile docs](https://developers.cloudflare.com/turnstile/)
