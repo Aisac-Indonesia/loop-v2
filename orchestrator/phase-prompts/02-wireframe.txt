@@ -7,6 +7,8 @@ Task: Execute the Wireframe & Mockup phase.
 Steps:
 1. Read the reference phase document
 2. Create wireframes and mockups for all pages
+   - Plan per page: proportional icons, data viz (dashboard >= 2 charts), "?" tour steps (wireframe/tour-plan.md), id/en/ja language switcher, password export dialog
+   - Pass UX Heuristic gate (UX-01..11) before presenting
 3. Present for user approval
 4. Wait for approval before proceeding
 5. Update templates/progress.md with results

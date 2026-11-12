@@ -13,6 +13,8 @@
 5. Error handling check
 6. Mobile responsiveness
 7. Database optimization
+8. Code language check (English-only code)
+9. Supply-chain & dependency security
 
 ---
 
@@ -77,6 +79,11 @@
 - [ ] Spacing konsisten
 - [ ] Button style konsisten
 - [ ] Form field style konsisten
+- [ ] Ikon proporsional: aksi utama & status pakai ikon, maks 1 ikon/aksi, icon-only punya `aria-label` (UX-08)
+- [ ] Dashboard ≥ 2 widget chart/stat; list modul numerik ≥ 1 chart, data dari API (UX-09)
+- [ ] Tombol `?` + guided tour bernomor di setiap modul utama (UX-10)
+- [ ] i18n: switcher id/en/ja berfungsi, tidak ada string UI hardcoded, key parity antar locale hijau (UX-11, aturan #14)
+- [ ] Export DOCX/PDF/XLSX: password opsional → file terenkripsi native, round-trip test hijau ([EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md))
 
 ### □ 5. Error Handling
 
@@ -110,6 +117,56 @@ Check:
 - [ ] Pagination dengan cursor/index (bukan offset untuk data besar)
 - [ ] Tidak ada query di loop
 
+### □ 8. Code Language Check (English Only)
+
+Aturan: [RULES-OF-THE-GAME.md #15](../RULES-OF-THE-GAME.md#15-code-language-standard--english-only-untuk-kode--wajib).
+Berlaku untuk source code aplikasi (identifier, komentar, nama tabel/kolom, commit message) — **bukan** file terjemahan UI.
+
+- [ ] Identifier (variabel, function, class, file, folder) bahasa Inggris
+- [ ] Komentar kode bahasa Inggris
+- [ ] Nama tabel & kolom database: `snake_case` + kata bahasa Inggris
+- [ ] Commit message repo aplikasi bahasa Inggris
+
+**Grep sanity check** (jalankan dari root project aplikasi):
+
+```bash
+# Kata Indonesia umum yang sering jadi identifier. Hit = review manual (bisa false positive).
+# Catatan: "data" sengaja tidak masuk — itu juga kata bahasa Inggris yang valid.
+ID_WORDS='nama|harga|simpan|hapus|tambah|ubah|daftar|pengguna|produk|kategori|jumlah|tanggal|keterangan|alamat|barang|transaksi|laporan|pembayaran|pelanggan|tampil|ambil|hitung|kirim'
+
+grep -rnoiE "[A-Za-z_]*(${ID_WORDS})[A-Za-z_]*" . \
+  --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' --include='*.vue' \
+  --include='*.svelte' --include='*.php' --include='*.py' --include='*.go' --include='*.sql' \
+  --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=.git --exclude-dir=dist \
+  --exclude-dir=locales --exclude-dir=lang \
+  && echo "⚠️  Review hit di atas — ganti ke English" || echo "✅ Tidak ada identifier Indonesia umum"
+
+# Nama file/folder
+find . -path ./node_modules -prune -o -path ./vendor -prune -o -path ./.git -prune -o \
+  -iregex ".*\(${ID_WORDS//|/\\|}\).*" -print
+
+# Commit message
+git log --format='%s' | grep -iwE "${ID_WORDS}|perbaikan|tambahkan|perbarui" | head
+```
+
+Contoh hit yang harus diganti: `hitungTotalHarga` → `calculateTotalPrice`, `tabel produk.harga` → `products.price`,
+`// simpan data produk` → `// save product data`.
+
+### □ 9. Supply-Chain & Dependency Security
+
+Aturan: [RULES-OF-THE-GAME.md #17](../RULES-OF-THE-GAME.md#17-supply-chain--dependency-security--wajib) ·
+Detail & perintah: [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md)
+
+- [ ] SC-01 Tidak ada `^`/`~`/`*`/`latest` di manifest (cek `jq` di standar)
+- [ ] SC-02 Lockfile ter-commit; CI pakai `npm ci` / `pnpm install --frozen-lockfile`
+- [ ] SC-03 Dependency baru sejak audit terakhir punya catatan Dependency Review
+- [ ] SC-04 `npm audit --audit-level=high` + Trivy/Grype bersih (atau exception terdokumentasi); `npm audit signatures` lulus
+- [ ] SC-05 Install scripts: hanya allowlist yang ter-review (`npm approve-scripts` / `pnpm ignored-builds`)
+- [ ] SC-07 Semua `FROM` di Dockerfile di-pin digest
+- [ ] SC-08 Renovate/Dependabot: cooldown + no auto-merge major
+- [ ] SC-09 SBOM release ter-generate
+- [ ] SC-10 Token CI least-privilege, tidak ada long-lived publish token
+
 ---
 
 ## 📋 Output Audit
@@ -129,6 +186,8 @@ Setelah audit selesai, buat laporan:
 - ✅ UI/UX: [pass/warning/fail]
 - ✅ Mobile: [pass/warning/fail]
 - ✅ Database: [pass/warning/fail]
+- ✅ Code Language (English-only): [pass/warning/fail]
+- ✅ Supply Chain: [pass/fail]
 
 ### Issues Found
 1. [Issue 1] — [Severity: high/medium/low] — [Status: fixed/open]
@@ -155,6 +214,8 @@ Setelah fase ini selesai:
 - [x] Error handling cover semua edge case
 - [x] Mobile responsive
 - [x] Database optimized
+- [x] Code language check (English-only) lulus
+- [x] Supply-chain checklist lulus (pass/fail)
 - [x] Laporan audit dibuat
 - [x] User sudah review laporan audit
 
@@ -171,3 +232,5 @@ Setelah audit lulus dan user approves laporan, update progress dan lanjut ke [06
 - [RULES-OF-THE-GAME.md](../RULES-OF-THE-GAME.md) — Aturan audit wajib
 - [standards/UI-UX-STANDARDS.md](../standards/UI-UX-STANDARDS.md) — Standar UI/UX
 - [standards/DATABASE-RULES.md](../standards/DATABASE-RULES.md) — Aturan database
+- [standards/SUPPLY-CHAIN-SECURITY.md](../standards/SUPPLY-CHAIN-SECURITY.md) — Gate supply-chain & dependency
+- [standards/EXPORT-STANDARDS.md](../standards/EXPORT-STANDARDS.md) — Export dengan password
