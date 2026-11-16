@@ -1,5 +1,7 @@
 # Sainskerta Loop V2 — TaskFlow Edition
 
+![LOOP V2 - Loop engineering with persistent state](promo/banner.png)
+
 > **Loop Engineering** • **Persistent State** • **Human-in-the-Loop**
 
 Sainskerta Loop V2 adalah metodologi pengembangan project berbasis **loop engineering** — setiap fase project berjalan dalam siklus terstruktur dengan **TaskFlow persistence**, **crash recovery**, dan **human-in-the-loop approval gates**.
@@ -152,6 +154,26 @@ Lihat [standards/AI-PROVIDERS.md](standards/AI-PROVIDERS.md).
 ## 🚀 Cara Migrasi dari V1
 
 Lihat [MIGRATION.md](MIGRATION.md)
+
+## 🎨 Brand & Promotion Kit
+
+Aset marketing siap pakai ada di [`promo/`](promo/) — bebas dipakai ulang
+di bawah lisensi MIT yang sama:
+
+| Aset | File | Kegunaan |
+| --- | --- | --- |
+| Logo mark | `promo/logo.png` | Ikon / avatar (1024x1024) |
+| Logo lockup | `promo/logo-wordmark.png` | Docs, header, slide |
+| Software box | `promo/software-box.png` | Render produk 3D |
+| Poster | `promo/poster.png` | Key art / cetak (portrait) |
+| Banner | `promo/banner.png` | Hero wide / header README |
+| Social preview | `promo/social-preview.png` | GitHub/Open Graph (1280x640) |
+| Feature showcase | `promo/feature-showcase.png` | Grid 4 fitur utama |
+| Social square | `promo/social-square.png` | Post IG / X (1:1) |
+| Video iklan | `promo/loop-v2-ad-15s.mp4` | Iklan launch 15 detik 1080p + audio |
+
+Palet brand: emerald `#10b981`, gold `#fbbf24`, charcoal `#0c1210`.
+Delapan node pada loop = delapan fase; node emas = approval gate (human-in-the-loop).
 
 ## 📜 Lisensi
 
