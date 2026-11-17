@@ -1,5 +1,9 @@
 # Sainskerta Loop V2 — TaskFlow Edition
 
+<p align="center">
+  <img src="promo/logo.png" alt="LOOP V2 logo mark" width="140">
+</p>
+
 ![LOOP V2 - Loop engineering with persistent state](promo/banner.png)
 
 > **Loop Engineering** • **Persistent State** • **Human-in-the-Loop**
@@ -174,6 +178,12 @@ di bawah lisensi MIT yang sama:
 
 Palet brand: emerald `#10b981`, gold `#fbbf24`, charcoal `#0c1210`.
 Delapan node pada loop = delapan fase; node emas = approval gate (human-in-the-loop).
+
+<p align="center">
+  <img src="promo/software-box.png" alt="LOOP V2 software box — cylindrical poster-tube packaging" width="380">
+</p>
+
+<img src="promo/feature-showcase.png" alt="LOOP V2 feature showcase" width="100%">
 
 ## 📜 Lisensi
 
